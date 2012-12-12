@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Exception.h"
-namespace SimpleRayTracer
+namespace StingRay
 {
 
 template <class vector, class implBuffer> class VectorStream {
@@ -18,7 +18,7 @@ private:
 	size_t maxElements;
 	size_t validElements;
 	vector * elemntBuffer;
-	implBuffer * buffer;
+	Buffer * buffer;
 
 
 
@@ -27,7 +27,7 @@ public:
 	VectorStream(size_t maxElements,SteramType type):maxElements(maxElements),
 									   validElements(0),buffer(buffer)
 	{
-		buffer = Core::getInstance()->createBufferForStream<vector>(maxElements,type);
+		buffer = Core::getInstance()->createBufferForStream(maxElements,sizeof(vector),type);
 		elemntBuffer = (vector*)malloc(sizeof(vector)*maxElements);
 		if(elemntBuffer == NULL)
 			THROW(1,"can't allocate vector local memory buffer");
@@ -71,12 +71,12 @@ public:
 	//! Writes to associated implementation buffer aka writes to video memory
 	void flush() const
 	{
-		buffer->write(elemntBuffer,getValidElements());
+		buffer->write(elemntBuffer,getValidElements(),sizeof(vector));
 	}
 	//! Reads associaed implementation buffer
 	void sync()
 	{
-		validElements = buffer->read(elemntBuffer,maxElements);
+		validElements = buffer->read(elemntBuffer,maxElements,sizeof(vector));
 	}
 	const implBuffer * getBuffer()const {return buffer;}
 	size_t getMaxElement() const{return maxElements;}

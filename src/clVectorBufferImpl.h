@@ -10,11 +10,11 @@
 
 #include <CL/cl.h>
 #include "Exception.h"
-namespace SimpleRayTracer
+namespace StingRay
 {
-template<class vectro> class clVectorBufferImpl
+class clVectorBufferImpl
 {
-	size_t allocatedElements;
+	size_t allocatedSize;
 	cl_context context;
 	cl_mem_flags flags;
 	cl_mem buffer;
@@ -23,21 +23,18 @@ template<class vectro> class clVectorBufferImpl
 	void createBuffer()
 	{
 		cl_int ret;
-		buffer = clCreateBuffer(context, flags,
-				allocatedElements * sizeof(vectro), NULL, &ret);
+		buffer = clCreateBuffer(context, flags,allocatedSize, NULL, &ret);
 		//:TODO handle allocation fault
 	}
 	const cl_mem * getBuffer()const {return &buffer;}
 public:
-	clVectorBufferImpl(cl_context context,cl_mem_flags flags,cl_command_queue command_queue ,size_t elementNum = 0)
-						:context(context),flags(flags),command_queue(command_queue)
+	clVectorBufferImpl(cl_context context,cl_mem_flags flags,cl_command_queue command_queue ,size_t maxSize =0)
+						:context(context),flags(flags),command_queue(command_queue),allocatedSize(maxSize)
 	{
-		allocatedElements = 0;
-		if(elementNum > 0)
-		{
-			allocatedElements = elementNum;
-			createBuffer();
 
+		if(allocatedSize > 0 )
+		{
+			createBuffer();
 		}
 		else
 			buffer = 0;
@@ -46,25 +43,32 @@ public:
 	{
 		if(buffer == 0)
 		{
-			allocatedElements = validElements;
+			maxSize = validElements;
+			this->elementSize = elementSize;
 			createBuffer();
 		}
-		size_t toWrite = validElements;
-		if(allocatedElements < toWrite)
-			toWrite = allocatedElements;
+
+		if(this->elementSize != elementSize)THROW(0,"Buffer allocated element size does not the same as requested");
+
+		size_t toWrite = validElements*elementSize;
+		if(allocatedElements*this->elementSize < toWrite)
+			toWrite = allocatedElements*this->elementSize;
 		cl_int ret = clEnqueueWriteBuffer(command_queue, buffer, CL_TRUE, 0,
-		            toWrite * sizeof(vectro), menBuffer, 0, NULL, NULL);
+		            toWrite, menBuffer, 0, NULL, NULL);
 
 		if(ret !=CL_SUCCESS)
 			THROW(ret,"can;t write to device memory buffer");
 	}
-	size_t read(void * memBuffer,size_t validElements)
+	size_t read(void * memBuffer,size_t validElements,size_t elementSize)
 	{
 		if(buffer == 0) return 0;
-		size_t toRead = validElements;
-		if(allocatedElements < toRead)toRead = allocatedElements;
+
+		if(this->elementSize != elementSize)THROW(0,"Buffer allocated element size does not the same as requested");
+
+		size_t toRead = validElements*elementSize;
+		if(allocatedElements*this->elementSize < toRead)toRead = allocatedElements*this->elementSize;
 		cl_int ret = clEnqueueReadBuffer(command_queue, buffer, CL_TRUE, 0,
-				toRead * sizeof(vectro), memBuffer, 0, NULL, NULL);
+				toRead, memBuffer, 0, NULL, NULL);
 		if(ret !=CL_SUCCESS)
 			THROW(ret,"can;t read device memory buffer");
 		return toRead;

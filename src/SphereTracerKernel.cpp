@@ -7,7 +7,7 @@
 
 #include "SphereTracerKernel.h"
 
-namespace SimpleRayTracer {
+namespace StingRay {
 
 SphereTracerKernel::SphereTracerKernel()
 	:Kernel("sphere_tracer.cl","main") {

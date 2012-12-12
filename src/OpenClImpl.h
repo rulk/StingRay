@@ -8,12 +8,14 @@
 #ifndef OPENCLIMPL_H_
 #define OPENCLIMPL_H_
 #include <CL/cl.h>
-namespace SimpleRayTracer
+namespace StingRay
 {
 	typedef cl_context Context;
 	typedef cl_program Program;
 	typedef cl_device_id DeviceId;
 	typedef cl_command_queue CommandQue;
+
+	typedef cl_char Char;
 
 	typedef cl_float Real;
 	typedef cl_float4 Vector4Impl;
@@ -41,28 +43,25 @@ namespace SimpleRayTracer
 	typedef cl_mem Image;
 }
 #include "clVectorBufferImpl.h"
-namespace SimpleRayTracer
+namespace StingRay
 {
-	typedef clVectorBufferImpl<cl_float> RealBuffer;
-	typedef clVectorBufferImpl<cl_float2> Vector2ImplBuffer;
-	typedef clVectorBufferImpl<cl_float3> Vector3ImplBuffer;
-	typedef clVectorBufferImpl<cl_float4> Vector4ImplBuffer;
+	typedef clVectorBufferImpl Buffer;
 }
 #include "OpenClCore.h"
-namespace SimpleRayTracer
+namespace StingRay
 {
 	typedef OpenClCore Core;
 }
 #include "VectorStream.h"
-namespace SimpleRayTracer
+namespace StingRay
 {
-	typedef VectorStream<cl_float,RealBuffer> RealStream;
-	typedef VectorStream<cl_float2,Vector2ImplBuffer> Vector2ImplStream;
-	typedef VectorStream<cl_float3,Vector3ImplBuffer> Vector3ImplStream;
-	typedef VectorStream<cl_float4,Vector4ImplBuffer> Vector4ImplStream;
+	typedef VectorStream<cl_float> RealStream;
+	typedef VectorStream<cl_float2> Vector2ImplStream;
+	typedef VectorStream<cl_float3> Vector3ImplStream;
+	typedef VectorStream<cl_float4> Vector4ImplStream;
 }
 #include "OpenClKernel.h"
-namespace SimpleRayTracer
+namespace StingRay
 {
 	typedef OpenClKernel Kernel;
 }

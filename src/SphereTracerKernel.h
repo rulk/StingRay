@@ -10,7 +10,7 @@
 #include "implementation.h"
 #include "Camera.h"
 #include "SphereStream.h"
-namespace SimpleRayTracer {
+namespace StingRay {
 
 class SphereTracerKernel:public Kernel {
 public:

@@ -6,7 +6,7 @@
  */
 
 #include "SphereStream.h"
-namespace SimpleRayTracer
+namespace StingRay
 {
 SphereStream::SphereStream(size_t size,SteramType type) {
 	// TODO Auto-generated constructor stub

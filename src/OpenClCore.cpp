@@ -7,7 +7,7 @@
 
 #include "implementation.h"
 #include "FreeImage.h"
-namespace SimpleRayTracer {
+namespace StingRay {
 OpenClCore * OpenClCore::Instance = NULL;
 void OpenClCore::init(int width,int height)
 {

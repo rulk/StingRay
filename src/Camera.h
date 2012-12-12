@@ -8,7 +8,7 @@
 #ifndef CAMERA_H_
 #define CAMERA_H_
 #include "implementation.h"
-namespace SimpleRayTracer {
+namespace StingRay {
 
 class Camera
 {

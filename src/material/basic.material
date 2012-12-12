@@ -1,0 +1,17 @@
+material basic/phong    
+{
+	ambient 0.5 0.4 0.6 1
+	reflectivity 0.2
+	diffuse 0.2 0.2 0.6 1
+	specular 0.2 0.2 0.2 10000
+}
+phong/sphere1    
+{
+	script basic_phong
+	
+	ambient 0.4 0.4 0.6 1
+	reflectivity 0.2
+	diffuse 0.2 0.2 0.6 1
+	specular 0.2 0.2 0.2 10000
+	texture 
+}

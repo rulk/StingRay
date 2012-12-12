@@ -10,7 +10,7 @@
 
 #include <string>
 #include <iostream>
-namespace SimpleRayTracer
+namespace StingRay
 {
 class Exception
 {

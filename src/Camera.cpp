@@ -7,7 +7,7 @@
 
 #include "Camera.h"
 #include "math.h"
-namespace SimpleRayTracer {
+namespace StingRay {
 Vector4Impl norm(Vector4Impl vec)
 {
 	Real l = sqrt(vec.x*vec.x+vec.y*vec.y+vec.z*vec.z);

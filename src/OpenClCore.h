@@ -9,7 +9,7 @@
 #define OPENCLCORE_H_
 #include <CL/cl.h>
 
-namespace SimpleRayTracer {
+namespace StingRay {
 
 class OpenClCore {
 
@@ -30,8 +30,8 @@ public:
 	static OpenClCore * getInstance();
 	static void init(int width,int height);
 	static void destroy();
-	template<class vector> clVectorBufferImpl<vector>* createBufferForStream(
-			size_t size, SteramType type) {
+	clVectorBufferImpl* createBufferForStream(
+			size_t numElements,size_t elementSize, SteramType type) {
 		cl_mem_flags flags;
 		switch (type) {
 		case STREAM_READ:
@@ -42,8 +42,8 @@ public:
 			break;
 		default:THROW(0,"Unsupported Stream type sorry.");
 		}
-		clVectorBufferImpl<vector> * buffer = new clVectorBufferImpl<vector>(
-				context, flags, command_que, size);
+		clVectorBufferImpl * buffer = new clVectorBufferImpl(
+				context, flags, command_que, elementSize,numElements);
 		return buffer;
 
 	}

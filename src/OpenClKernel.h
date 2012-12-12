@@ -8,7 +8,7 @@
 #ifndef KERNEL_H_
 #define KERNEL_H_
 #include <string>
-namespace SimpleRayTracer {
+namespace StingRay {
 
 class OpenClKernel
 {

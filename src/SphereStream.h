@@ -9,7 +9,7 @@
 #define SPHERESTREAM_H_
 //Basic stream to sphere buffer
 #include "implementation.h"
-namespace SimpleRayTracer
+namespace StingRay
 {
 class SphereStream
 {

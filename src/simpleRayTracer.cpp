@@ -10,7 +10,7 @@
 #include "implementation.h"
 #include "SphereTracerKernel.h"
 using namespace std;
-using namespace SimpleRayTracer;
+using namespace StingRay;
 
 int main() {
 

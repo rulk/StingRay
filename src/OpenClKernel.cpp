@@ -6,7 +6,7 @@
  */
 #include <CL/cl.h>
 #include "implementation.h"
-namespace SimpleRayTracer {
+namespace StingRay {
 #define MAX_SOURCE_SIZE (0x100000)
 OpenClKernel::OpenClKernel(const std::string & fileName,const std::string & kernelName)
 
