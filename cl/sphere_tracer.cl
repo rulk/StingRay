@@ -50,7 +50,7 @@ bool raySphereIntersect(float4 center,float r,const Ray * ray,float * distan,flo
 	return true;
 	
 }
-__kernel void main(__write_only image2d_t output,__global float4 *camera, __global float4 *spherePos, __global float4 *sphereColor)
+__kernel void sphtracer(__write_only image2d_t output,__global float4 *camera, __global float4 *spherePos, __global float4 *sphereColor)
 {
 	int i = get_global_id(0);
 	Camera cam;
