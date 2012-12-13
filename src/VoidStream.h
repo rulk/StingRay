@@ -12,53 +12,65 @@ namespace StingRay
 {
 class VoidStream
 {
+protected:
 	size_t maxSize;
 	size_t validSize;
-	size_t elementSize;
 	void * elemntBuffer;
-	clVectorBufferImpl<char> * buffer;
+	Buffer * buffer;
 
 public:
-	VoidStream(size_t size, SteramType type, size_t elementSize = 1) :
-		maxSize(size), validSize(0), buffer(buffer),elementSize(elementSize)
+	VoidStream(size_t size, SteramType type) :
+		maxSize(size), validSize(0), buffer(buffer)
 	{
-		buffer = Core::getInstance()->createBufferForStream(maxSize, elementSize, type);
+		buffer = Core::getInstance()->createBufferForStream(maxSize, type);
 		elemntBuffer = malloc(maxSize);
 		if (elemntBuffer == NULL)
 			THROW(1, "can't allocate vector local memory buffer");
 	}
-	~VoidStream()
+	virtual ~VoidStream()
 	{
 		if (elemntBuffer != NULL)
 			free(elemntBuffer);
 	}
-	template <class T> bool put(const T & data)
+	template <class T> bool putData(const T & data)
 	{
 		if(validSize+sizeof(T) < maxSize && elemntBuffer != NULL)
 		{
-			*((T*)(elemntBuffer+offset*elementSize))  = data;
-			validSize+=off
+			*((T*)(elemntBuffer+validSize))  = data;
+			validSize+=sizeof(T);
 			return true;
 		}
 		return false;
 	}
-	bool replace(const vector & v,size_t position)
+	/**
+	 * Use with extreme care if you rewrite some data not probably alighn you will get junk
+	 */
+	template<class T> bool replaceData(const T & data,size_t offset)
 	{
-		if(position < maxElements && validElements > position && elemntBuffer != NULL)
+		if(offset+sizeof(T) < validSize && elemntBuffer != NULL)
 		{
-			elemntBuffer[position] = v;
+			*((T*)(elemntBuffer+offset))  = data;
 			return true;
 		}
 		return false;
 	}
-	bool get(size_t position,vector & result) const
+	template<class T>bool getData(size_t offset,T & result) const
 	{
-		if(position < validElements && elemntBuffer != NULL)
+		if(offset+sizeof(T) < validSize && elemntBuffer != NULL)
 		{
-			result = elemntBuffer[position];
+			result = *((T*)(elemntBuffer+offset));
 			return true;
 		}
 		return false;
+	}
+	void flushData() const
+	{
+		buffer->write(elemntBuffer, validSize);
+	}
+	//! Reads associaed implementation buffer
+	void syncData()
+	{
+		validSize = buffer->read(elemntBuffer, maxSize);
 	}
 };
 }

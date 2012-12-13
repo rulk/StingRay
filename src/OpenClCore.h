@@ -31,7 +31,7 @@ public:
 	static void init(int width,int height);
 	static void destroy();
 	clVectorBufferImpl* createBufferForStream(
-			size_t numElements,size_t elementSize, SteramType type) {
+			size_t numElements, SteramType type) {
 		cl_mem_flags flags;
 		switch (type) {
 		case STREAM_READ:
@@ -43,7 +43,7 @@ public:
 		default:THROW(0,"Unsupported Stream type sorry.");
 		}
 		clVectorBufferImpl * buffer = new clVectorBufferImpl(
-				context, flags, command_que, elementSize,numElements);
+				context, flags, command_que,numElements);
 		return buffer;
 
 	}

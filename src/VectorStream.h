@@ -10,50 +10,41 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Exception.h"
+#include "VoidStream.h"
 namespace StingRay
 {
 
-template <class vector, class implBuffer> class VectorStream {
+template <class vector> class VectorStream: protected VoidStream {
 private:
 	size_t maxElements;
 	size_t validElements;
-	vector * elemntBuffer;
-	Buffer * buffer;
-
-
 
 public:
 
-	VectorStream(size_t maxElements,SteramType type):maxElements(maxElements),
-									   validElements(0),buffer(buffer)
+	VectorStream(size_t maxElements,SteramType type):VoidStream(sizeof(vector)*maxElements,type),maxElements(maxElements),
+									   validElements(0)
 	{
-		buffer = Core::getInstance()->createBufferForStream(maxElements,sizeof(vector),type);
-		elemntBuffer = (vector*)malloc(sizeof(vector)*maxElements);
-		if(elemntBuffer == NULL)
-			THROW(1,"can't allocate vector local memory buffer");
+
 	}
 	~VectorStream()
 	{
-		if(elemntBuffer != NULL)
-			free(elemntBuffer);
-	}
 
+	}
 	bool put(const vector & v)
 	{
 		if(validElements < maxElements && elemntBuffer != NULL)
 		{
-			elemntBuffer[validElements]  = v;
+			putData<vector>(v);
 			validElements++;
 			return true;
 		}
 		return false;
 	}
-
 	bool replace(const vector & v,size_t position)
 	{
 		if(position < maxElements && validElements > position && elemntBuffer != NULL)
 		{
-			elemntBuffer[position] = v;
+			replaceData<vector>(v,position*sizeof(vector));
 			return true;
 		}
 		return false;
@@ -62,8 +53,7 @@ public:
 	{
 		if(position < validElements && elemntBuffer != NULL)
 		{
-			result = elemntBuffer[position];
-			return true;
+			return getData< vector>(position*sizeof(vector),result);
 		}
 		return false;
 	}
@@ -71,14 +61,14 @@ public:
 	//! Writes to associated implementation buffer aka writes to video memory
 	void flush() const
 	{
-		buffer->write(elemntBuffer,getValidElements(),sizeof(vector));
+		flushData();
 	}
 	//! Reads associaed implementation buffer
 	void sync()
 	{
-		validElements = buffer->read(elemntBuffer,maxElements,sizeof(vector));
+		syncData();
 	}
-	const implBuffer * getBuffer()const {return buffer;}
+	const Buffer * getBuffer()const {return buffer;}
 	size_t getMaxElement() const{return maxElements;}
 	size_t getValidElements() const { return validElements;}
 

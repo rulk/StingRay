@@ -29,9 +29,8 @@ class clVectorBufferImpl
 	const cl_mem * getBuffer()const {return &buffer;}
 public:
 	clVectorBufferImpl(cl_context context,cl_mem_flags flags,cl_command_queue command_queue ,size_t maxSize =0)
-						:context(context),flags(flags),command_queue(command_queue),allocatedSize(maxSize)
+						:allocatedSize(maxSize),context(context),flags(flags),command_queue(command_queue)
 	{
-
 		if(allocatedSize > 0 )
 		{
 			createBuffer();
@@ -39,34 +38,28 @@ public:
 		else
 			buffer = 0;
 	}
-	void write(const void * menBuffer,size_t validElements)
+	void write(const void * menBuffer,size_t size)
 	{
 		if(buffer == 0)
 		{
-			maxSize = validElements;
-			this->elementSize = elementSize;
+			allocatedSize = size;
 			createBuffer();
 		}
-
-		if(this->elementSize != elementSize)THROW(0,"Buffer allocated element size does not the same as requested");
-
-		size_t toWrite = validElements*elementSize;
-		if(allocatedElements*this->elementSize < toWrite)
-			toWrite = allocatedElements*this->elementSize;
+		size_t toWrite = allocatedSize;
+		if(allocatedSize < toWrite)
+			toWrite = allocatedSize;
 		cl_int ret = clEnqueueWriteBuffer(command_queue, buffer, CL_TRUE, 0,
 		            toWrite, menBuffer, 0, NULL, NULL);
 
 		if(ret !=CL_SUCCESS)
 			THROW(ret,"can;t write to device memory buffer");
 	}
-	size_t read(void * memBuffer,size_t validElements,size_t elementSize)
+	size_t read(void * memBuffer,size_t size)
 	{
 		if(buffer == 0) return 0;
 
-		if(this->elementSize != elementSize)THROW(0,"Buffer allocated element size does not the same as requested");
-
-		size_t toRead = validElements*elementSize;
-		if(allocatedElements*this->elementSize < toRead)toRead = allocatedElements*this->elementSize;
+		size_t toRead = size;
+		if(allocatedSize < toRead)toRead = allocatedSize;
 		cl_int ret = clEnqueueReadBuffer(command_queue, buffer, CL_TRUE, 0,
 				toRead, memBuffer, 0, NULL, NULL);
 		if(ret !=CL_SUCCESS)

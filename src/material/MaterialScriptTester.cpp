@@ -12,7 +12,7 @@
 #include "ConfigLoader.h"
 using namespace std;
 using namespace StingRay;
-int main() {
+int testMain() {
 
 	MaterialProgramManager * manager = new MaterialProgramManager("/home/rulkw/src/c++tests/MaterialScriptTester/src/");
 	const MaterialProgramm & program = manager->getProgram("script_example");
