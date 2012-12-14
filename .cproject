@@ -46,9 +46,14 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.1101880991" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
 								<option id="gnu.cpp.link.option.paths.222638830" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/opt/AMDAPP"/>
+									<listOptionValue builtIn="false" value="/opt/AMDAPP/lib/x86_64"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.424367400" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="OpenCL"/>
+									<listOptionValue builtIn="false" value="GL"/>
+									<listOptionValue builtIn="false" value="X11"/>
+									<listOptionValue builtIn="false" value="GLEW"/>
+									<listOptionValue builtIn="false" value="glut"/>
 									<listOptionValue builtIn="false" value="freeimage"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1330414189" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">

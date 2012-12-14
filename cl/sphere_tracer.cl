@@ -19,7 +19,7 @@ float2 computeRay(Camera * cam,float2 coords,Ray * outRay)
 	float b = tan(cam->fov.y/2.0)*((cam->dim.y/2.0 - coords.y)/(cam->dim.y/2.0));
 	
 	outRay->p = cam->p;
-	outRay->d = a*cam->u+b*cam->v + cam->w;
+	outRay->d = a*cam->u+b*cam->v - cam->w;
 	outRay->d = normalize(outRay->d);
 	float2 ret;
 	ret.x = a;ret.y=b;
@@ -70,7 +70,7 @@ __kernel void sphtracer(__write_only image2d_t output,__global float4 *camera, _
 	Ray ray;
 	float2 c = computeRay(&cam,coordf,&ray);
 	float di ;//= dot(ray.d,cam.w)/2.0 +0.5;
-	uint4 color = (uint4)(0,0,0,255);//*(dot(ray.d,cam.w)/2.0+0.5)
+	uint4 color = (uint4)(0,255,0,255);//*(dot(ray.d,cam.w)/2.0+0.5)
 	float intense;
 	if(raySphereIntersect(spherePos[0],sphereColor[0].x,&ray,&di,&intense))
 	{

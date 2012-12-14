@@ -67,6 +67,7 @@ public:
 	void sync()
 	{
 		syncData();
+		validElements = validSize/sizeof(vector);
 	}
 	const Buffer * getBuffer()const {return buffer;}
 	size_t getMaxElement() const{return maxElements;}
