@@ -7,6 +7,7 @@
 
 #ifndef OPENCLCORE_H_
 #define OPENCLCORE_H_
+#include <GL/gl.h>
 #include <CL/cl.h>
 
 namespace StingRay {
@@ -18,8 +19,9 @@ class OpenClCore {
 	cl_device_id device_id;
 
 	cl_platform_id platform_id;
-	cl_uint ret_num_devices;
-	cl_uint ret_num_platforms;
+
+
+	GLuint color_tex,fb;
 	static OpenClCore * Instance;
 	Image image;
 	OpenClCore(int width,int height);

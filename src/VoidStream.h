@@ -34,7 +34,7 @@ public:
 	}
 	template <class T> bool putData(const T & data)
 	{
-		if(validSize+sizeof(T) < maxSize && elemntBuffer != NULL)
+		if(validSize+sizeof(T) <= maxSize && elemntBuffer != NULL)
 		{
 			*((T*)(elemntBuffer+validSize))  = data;
 			validSize+=sizeof(T);
@@ -47,7 +47,7 @@ public:
 	 */
 	template<class T> bool replaceData(const T & data,size_t offset)
 	{
-		if(offset+sizeof(T) < validSize && elemntBuffer != NULL)
+		if(offset+sizeof(T) <= validSize && elemntBuffer != NULL)
 		{
 			*((T*)(elemntBuffer+offset))  = data;
 			return true;
@@ -56,7 +56,7 @@ public:
 	}
 	template<class T>bool getData(size_t offset,T & result) const
 	{
-		if(offset+sizeof(T) < validSize && elemntBuffer != NULL)
+		if(offset+sizeof(T) <= validSize && elemntBuffer != NULL)
 		{
 			result = *((T*)(elemntBuffer+offset));
 			return true;

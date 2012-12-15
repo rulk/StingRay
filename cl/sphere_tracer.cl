@@ -70,13 +70,13 @@ __kernel void sphtracer(__write_only image2d_t output,__global float4 *camera, _
 	Ray ray;
 	float2 c = computeRay(&cam,coordf,&ray);
 	float di ;//= dot(ray.d,cam.w)/2.0 +0.5;
-	uint4 color = (uint4)(0,255,0,255);//*(dot(ray.d,cam.w)/2.0+0.5)
+	uint4 color = (uint4)(0,0,0,255);//*(dot(ray.d,cam.w)/2.0+0.5)
 	float intense;
 	if(raySphereIntersect(spherePos[0],sphereColor[0].x,&ray,&di,&intense))
 	{
 		
-		color.xyz = (uint3)(sphereColor[0].y*255,sphereColor[0].z*255,sphereColor[0].w*255);
-		color.xyz *= intense;
+		color = (uint4)(sphereColor[0].y*255,sphereColor[0].z*255,sphereColor[0].w*255,255);
+		//color.xyz *= intense;
 		
 	}
 	write_imageui(output,coord,color);

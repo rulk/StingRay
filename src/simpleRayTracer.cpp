@@ -17,29 +17,25 @@ using namespace StingRay;
 void display();
 int main(int argc, char **argv) {
 
-	glutInit(&argc,argv);
+	/*glutInit(&argc,argv);
 	glutInitWindowPosition(0, 0);
-	glutInitWindowSize(120,120);
+	glutInitWindowSize(256,256);
 	glutInitDisplayMode(GLUT_RGBA|GLUT_SINGLE );
 	glutCreateWindow("StingRay");
 	glutDisplayFunc(display);
-	glutReshapeWindow(120,120);
+	glutReshapeWindow(256,256);
 	glewInit();
 	glXGetCurrentDisplay();
-	glutMainLoop();
+	glutMainLoop();*/
+	display();
 	return 1;
 }
 void display()
 {
 
-	Core::init(120,120);
+	Core::init(256,256);
 	Core::getInstance()->initImageRendering();
-	void * data = malloc(sizeof(int)*20);
-	int i  = 11;
-	int & b = i;
-	*((int*)(data+sizeof(int))) = b;
 
-	std::cout<<*((int*)(data+sizeof(int)))<<std::endl;
 
     Camera * cam = new Camera();
 
@@ -56,8 +52,8 @@ void display()
     kernel->setCamera(cam);
     kernel->setSphereStream(spheres);
 
-	size_t global_item_size = 120*120; // Process the entire lists
-    size_t local_item_size = 120;
+	size_t global_item_size = 256*256; // Process the entire lists
+    size_t local_item_size = 256;
 
 	kernel->run(Core::getInstance()->getQue(),&global_item_size,&local_item_size);
 
