@@ -45,7 +45,7 @@ void display()
     cam->flush();
 
     SphereStream * spheres = new SphereStream(1,STREAM_WRITE);
-    spheres->put(Vector4I(2,0,-8,1),1,Vector3I(1,1,0));
+    spheres->put(Vector4I(2,0,-8,1),1,Vector3I(0,0,1));
     spheres->flush();
 
     SphereTracerKernel * kernel = new SphereTracerKernel();

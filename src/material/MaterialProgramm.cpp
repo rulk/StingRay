@@ -15,28 +15,9 @@
 #include <locale>
 #include "MaterialProgramm.h"
 #include "StringUtils.h"
+#include "Exception.h"
 namespace StingRay
 {
-size_t MaterialProgramm::getTypeSize(const std::string & type)
-{
-	if(type == "float")
-		return 4;
-	else if(type == "float2")
-		return 4*2;
-	else if(type == "float3")
-			return 4*4;
-	else if(type == "float4")
-			return 4*3;
-	else if(type == "int")
-			return 4;
-	else if(type == "int2")
-			return 4*4;
-	else if(type == "int3")
-			return 4*3;
-	else if(type == "int4")
-			return 4*4;
-	return 0;
-}
 
 MaterialProgramm::MaterialProgramm(const std::string & name,const std::string & filename)
 {
@@ -44,7 +25,7 @@ MaterialProgramm::MaterialProgramm(const std::string & name,const std::string & 
 	paramsByteSize = 0;
 	loadFile(filename);
 	processSource();
-	// TODO Auto-generated constructor stub
+
 
 }
 void MaterialProgramm::loadFile(const std::string & fname)
@@ -67,6 +48,7 @@ void MaterialProgramm::loadFile(const std::string & fname)
 	else
 	{
 		std::cout<<"failed to open file:"<<fname<<std::endl;
+		THROW(0,"failed to load program:"+fname);
 	}
 	sourceStream<<"\n}";
 
@@ -116,8 +98,11 @@ void MaterialProgramm::processSource()
 			param.isNaN = false;
 
 			param.size = getTypeSize(param.type);
+			if(param.size == 0)
+			{
+				THROW(0,"Unknown type:"+param.type+"in program:"+name);
+			}
 			paramsByteSize +=param.size;
-			//!TODO: if size is 0 then throw something
 			params[paramCounter] = param;
 			paramNameId[param.name] = param.id;
 			source<<processedSource.substr(fragment_start_pos,start_pos-fragment_start_pos);
@@ -153,7 +138,7 @@ const MaterialProgramParam & MaterialProgramm::getById(unsigned int id) const
 	}
 	else
 	{
-		//!TODO: throw something!
+		THROW(0,"Can't find parameter by id in program:"+name);
 	}
 }
 size_t MaterialProgramm::getParamOffset(unsigned int id) const

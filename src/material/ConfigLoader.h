@@ -109,7 +109,22 @@ namespace StingRay
 			assert(index < m_children.size());
 			return m_children[index];
 		}
- 
+		inline void addChild(ConfigNode * node ,bool replaceExisting = false)
+		{
+			for(int i=0;i<m_children.size();i++)
+			{
+				if(node->getName() == m_children[i]-->getName())
+				{
+					if(replaceExisting)
+					{
+						delete m_children[i];
+						m_children[i] = node;
+					}
+					return;
+				}
+			}
+			m_children.push_back(node);
+		}
 		void setParent(ConfigNode *newParent);
  
 		inline ConfigNode *getParent()

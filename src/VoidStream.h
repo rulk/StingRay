@@ -47,7 +47,7 @@ public:
 	 */
 	template<class T> bool replaceData(const T & data,size_t offset)
 	{
-		if(offset+sizeof(T) <= validSize && elemntBuffer != NULL)
+		if( offset+sizeof(T) <= maxSize && elemntBuffer != NULL)
 		{
 			*((T*)(elemntBuffer+offset))  = data;
 			return true;

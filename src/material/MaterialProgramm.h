@@ -24,8 +24,6 @@ struct MaterialProgramParam
 };
 class MaterialProgramm
 {
-	static size_t getTypeSize(const std::string & type);
-
 	std::string name;
 	std::string processedSource;
 	size_t paramsByteSize;
@@ -40,6 +38,7 @@ public:
 	size_t getParamOffset(unsigned int id) const;
 	size_t getParamOffset(const std::string & name) const;
 	std::string getParamName(unsigned int id) const;
+	std::string getParamType(unsigned int id) const;
 	std::string getProcessedSource() const;
 	unsigned int getParamId(const std::string & name) const;
 

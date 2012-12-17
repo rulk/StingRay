@@ -6,7 +6,7 @@
  */
 #include <sstream>
 #include "MaterialProgramManager.h"
-
+#include "Exception.h"
 namespace StingRay
 {
 MaterialProgramManager::MaterialProgramManager(const std::string & programPath, const std::string & programExtension)
@@ -14,7 +14,7 @@ MaterialProgramManager::MaterialProgramManager(const std::string & programPath, 
 {
 
 }
-const MaterialProgramm & MaterialProgramManager::getProgram(const std::string & name)
+const MaterialProgramm * MaterialProgramManager::getProgram(const std::string & name)
 {
 	std::map<std::string, unsigned int>::iterator it = programNameToId.find(name);
 	if(it == programNameToId.end())
@@ -23,14 +23,14 @@ const MaterialProgramm & MaterialProgramManager::getProgram(const std::string & 
 	}
 	else return getProgramById(it->second);
 }
-const MaterialProgramm & MaterialProgramManager::getProgramById(unsigned int id)
+const MaterialProgramm * MaterialProgramManager::getProgramById(unsigned int id)
 {
 	std::map<unsigned int,MaterialProgramm * >::iterator it = programs.find(id);
 	if(it != programs.end())
 		return *it->second;
-	//!TODO:throw something
+	return NULL;
 }
-MaterialProgramm &  MaterialProgramManager::loadProgram(const std::string & name)
+MaterialProgramm *  MaterialProgramManager::loadProgram(const std::string & name)
 {
 
 	std::string path;
@@ -40,7 +40,7 @@ MaterialProgramm &  MaterialProgramManager::loadProgram(const std::string & name
 	programs[progRamIdCounter] = program;
 	programNameToId[program->name] = progRamIdCounter;
 	progRamIdCounter++;
-	return *program;
+	return program;
 }
 std::string MaterialProgramManager::buildSource()
 {
