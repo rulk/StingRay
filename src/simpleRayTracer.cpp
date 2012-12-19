@@ -5,7 +5,7 @@
 // Copyright   : This source is copyrighed by Leonid Sinyakov, All Rights reserved
 // Description : Hello World in C++, Ansi-style
 //============================================================================
-
+#ifndef UNIT_TESTS
 #include <iostream>
 #include <stdlib.h>
 #include <GL/glxew.h>
@@ -69,3 +69,4 @@ void display()
 	return ;
 
 }
+#endif

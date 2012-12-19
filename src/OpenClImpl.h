@@ -66,7 +66,7 @@ namespace StingRay
 		vec.x = RealI(x), vec.y = RealI(x);
 		return vec;
 	}
-	size_t getTypeSize(const std::string & type)
+	inline size_t getTypeSize(const std::string & type)
 	{
 		if(type == "float")
 			return sizeof(cl_float);

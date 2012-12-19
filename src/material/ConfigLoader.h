@@ -113,7 +113,7 @@ namespace StingRay
 		{
 			for(int i=0;i<m_children.size();i++)
 			{
-				if(node->getName() == m_children[i]-->getName())
+				if(node->getName() == m_children[i]->getName())
 				{
 					if(replaceExisting)
 					{

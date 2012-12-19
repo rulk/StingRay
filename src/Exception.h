@@ -14,12 +14,14 @@ namespace StingRay
 {
 class Exception
 {
-	int errno,line;
+	int err,line;
 	std::string message,file;
 public:
-	Exception(int errno,std::string message,std::string file,int line):
-	errno(errno),line(line),message(message),file(file)
+	Exception(int err,std::string message,std::string file,int line):
+	message(message),file(file)
 	{
+		this->err = err;
+		this->line = line;
 		std::cout<<"Error "<<errno<<" has occured:"<<message<<" in file:"<<file<<" line:"<<line<<std::endl;
 	}
 };
