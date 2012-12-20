@@ -10,7 +10,9 @@
 
 enum SteramType
 {
+	//!Readable stream by rendering calls to underling engine, Sting Ray can only write this stream
 	STREAM_READ,
+	//!Writable stream by rendering calls to underling engine, Sting Ray can only read this stream
 	STREAM_WRITE,
 	STREAM_READ_WRITE
 };

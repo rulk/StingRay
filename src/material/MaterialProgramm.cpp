@@ -13,13 +13,14 @@
 #include <functional>
 #include <cctype>
 #include <locale>
+#include "implementation.h"
 #include "MaterialProgramm.h"
 #include "StringUtils.h"
-#include "Exception.h"
+
 namespace StingRay
 {
 
-MaterialProgramm::MaterialProgramm(const std::string & name,const std::string & filename)
+MaterialProgram::MaterialProgram(const std::string & name,const std::string & filename)
 {
 	this->name = name;
 	paramsByteSize = 0;
@@ -28,7 +29,7 @@ MaterialProgramm::MaterialProgramm(const std::string & name,const std::string & 
 
 
 }
-void MaterialProgramm::loadFile(const std::string & fname)
+void MaterialProgram::loadFile(const std::string & fname)
 {
 	std::ifstream source(fname.c_str());
 	std::string line;
@@ -55,7 +56,7 @@ void MaterialProgramm::loadFile(const std::string & fname)
 	processedSource =  sourceStream.str();
 
 }
-void MaterialProgramm::processSource()
+void MaterialProgram::processSource()
 {
 	size_t cur_pos = 0;
 	size_t start_pos = std::string::npos;
@@ -121,15 +122,15 @@ void MaterialProgramm::processSource()
 	processedSource = source.str();
 
 }
-size_t MaterialProgramm::paramCount() const
+size_t MaterialProgram::getParamCount() const
 {
 	return params.size();
 }
-size_t MaterialProgramm::paramTotalLength() const
+size_t MaterialProgram::getParamTotalLength() const
 {
 	return paramsByteSize;
 }
-const MaterialProgramParam & MaterialProgramm::getById(unsigned int id) const
+const MaterialProgramParam & MaterialProgram::getById(unsigned int id) const
 {
 	std::map<unsigned int,MaterialProgramParam>::const_iterator it = params.find(id);
 	if(it != params.end())
@@ -141,36 +142,42 @@ const MaterialProgramParam & MaterialProgramm::getById(unsigned int id) const
 		THROW(0,"Can't find parameter by id in program:"+name);
 	}
 }
-size_t MaterialProgramm::getParamOffset(unsigned int id) const
+size_t MaterialProgram::getParamOffset(unsigned int id) const
 {
 	MaterialProgramParam param = getById(id);
 	if(!param.isNaN) return param.offset;
 	return 0;
 }
-size_t MaterialProgramm::getParamOffset(const std::string & name) const
+size_t MaterialProgram::getParamOffset(const std::string & name) const
 {
 	MaterialProgramParam param = getById(getParamId(name));
 	if(!param.isNaN) return param.offset;
 	return 0;
 }
-std::string  MaterialProgramm::getParamName(unsigned int id) const
+std::string  MaterialProgram::getParamName(unsigned int id) const
 {
 	MaterialProgramParam param = getById(id);
 	if(!param.isNaN) return param.name;
-	return 0;
+	return "None";
 }
-std::string MaterialProgramm::getProcessedSource() const
+std::string MaterialProgram::getParamType(unsigned int id) const
+{
+	MaterialProgramParam param = getById(id);
+	if(!param.isNaN) return param.type;
+	return "None";
+}
+std::string MaterialProgram::getProcessedSource() const
 {
 	return processedSource;
 }
-unsigned int MaterialProgramm::getParamId(const std::string & name) const
+unsigned int MaterialProgram::getParamId(const std::string & name) const
 {
 	std::map<std::string,unsigned int>::const_iterator it = paramNameId.find(name);
 	if(it != paramNameId.end())
 		return it->second;
 	return INVALID_ID;
 }
-MaterialProgramm::~MaterialProgramm()
+MaterialProgram::~MaterialProgram()
 {
 	// TODO Auto-generated destructor stub
 }

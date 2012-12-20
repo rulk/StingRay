@@ -7,6 +7,7 @@
 
 #ifndef VOIDSTREAM_H_
 #define VOIDSTREAM_H_
+#include <string.h>
 #include "Exception.h"
 namespace StingRay
 {
@@ -92,15 +93,15 @@ public:
 		}
 		return false;
 	}
-	bool putData(const StreamData & data)
+	bool putStreamData(const StreamData & data)
 	{
 		return putData(data.getIMemoryPtr(), data.getISize());
 	}
-	bool replaceData(const StreamData & data)
+	bool replaceStreamData(const StreamData & data,size_t offset)
 	{
-		return replaceData(data.getIMemoryPtr(), data.getISize());
+		return replaceData(data.getIMemoryPtr(), data.getISize(),offset);
 	}
-	bool getData(size_t offset, StreamData & data)
+	bool getStreamData(size_t offset, StreamData & data)
 	{
 		if (offset + data.getISize() <= validSize && elemntBuffer != NULL)
 		{
@@ -119,6 +120,7 @@ public:
 	{
 		validSize = buffer->read(elemntBuffer, maxSize);
 	}
+	const Buffer * getBuffer()const {return buffer;}
 };
 }
 

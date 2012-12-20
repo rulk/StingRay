@@ -5,28 +5,27 @@
  *      Author: rulk
  */
 
-#include <type_traits>
 #include "StreamData.h"
 namespace StingRay
 {
-template<int D,class T,class IMP>
-class STREAM_VEC_CLASS_NAME:public Vec<D,T>,public StreamData
+template<class T,class IMP>
+class STREAM_VEC_CLASS_NAME:public Vec<DIMENSION,T>,public StreamData
 {
 
 	mutable IMP data;
 	void synchImplementationData() const
 	{
 #if DIMENSION == 1
-		data = Vec<D,T>::v[0];
+		data = Vec<DIMENSION,T>::v[0];
 #elif DIMENSION > 1
-		data.x = Vec<D,T>::v[0];
-		data.y = Vec<D,T>::v[1];
+		data.x = Vec<DIMENSION,T>::v[0];
+		data.y = Vec<DIMENSION,T>::v[1];
 #endif
 #if DIMENSION > 3
-		data.z = Vec<D,T>::v[2];
+		data.z = Vec<DIMENSION,T>::v[2];
 #endif
 #if DIMENSION > 4
-		data.w = Vec<D,T>::v[3];
+		data.w = Vec<DIMENSION,T>::v[3];
 #endif
 	}
 public:
@@ -34,34 +33,22 @@ public:
 
 	STREAM_VEC_CLASS_NAME(const IMP & x)
 	{
-		data = x;
-#if DIMENSION == 1
-		Vec<D,T>::v[0] = x;
-#elif DIMENSION > 1
-		Vec<D,T>::v[0] = x.x;
-		Vec<D,T>::v[1] = x.y;
-#endif
-#if DIMENSION > 3
-		Vec<D,T>::v[2] = x.z;
-#endif
-#if DIMENSION > 4
-		Vec<D,T>::v[3] = x.w;
-#endif
+		setIData(&x);
 
 	}
 	STREAM_VEC_CLASS_NAME(const std::vector<std::string> & strings)
 	{
 #if DIMENSION == 1
-		Vec<D,T>::v[0] = (T)atof(strings[0].c_str());
+		Vec<DIMENSION,T>::v[0] = (T)atof(strings[0].c_str());
 #elif DIMENSION > 1
-		Vec<D,T>::v[0] =  (T)atof(strings[0].c_str());
-		Vec<D,T>::v[1] =  (T)atof(strings[1].c_str());
+		Vec<DIMENSION,T>::v[0] =  (T)atof(strings[0].c_str());
+		Vec<DIMENSION,T>::v[1] =  (T)atof(strings[1].c_str());
 #endif
 #if DIMENSION > 3
-		Vec<D,T>::v[2] =  (T)atof(strings[2].c_str());
+		Vec<DIMENSION,T>::v[2] =  (T)atof(strings[2].c_str());
 #endif
 #if DIMENSION > 4
-		Vec<D,T>::v[3] =  (T)atof(strings[3].c_str());
+		Vec<DIMENSION,T>::v[3] =  (T)atof(strings[3].c_str());
 #endif
 
 	}
@@ -84,18 +71,19 @@ public:
 		IMP x = *((IMP*) ptr);
 		data = x;
 #if DIMENSION == 1
-		Vec<D,T>::v[0] = x;
+		Vec<DIMENSION,T>::v[0] = x;
 #elif DIMENSION > 1
-		Vec<D,T>::v[0] = x.x;
-		Vec<D,T>::v[1] = x.y;
+		Vec<DIMENSION,T>::v[0] = x.x;
+		Vec<DIMENSION,T>::v[1] = x.y;
 #endif
 #if DIMENSION > 3
-		Vec<D,T>::v[2] = x.z;
+		Vec<DIMENSION,T>::v[2] = x.z;
 #endif
 #if DIMENSION > 4
-		Vec<D,T>::v[3] = x.w;
+		Vec<DIMENSION,T>::v[3] = x.w;
 #endif
 	}
+	virtual ~STREAM_VEC_CLASS_NAME(){}
 };
 /*
 StreamVec(const IMP & init)

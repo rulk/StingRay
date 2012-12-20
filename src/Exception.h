@@ -22,7 +22,7 @@ public:
 	{
 		this->err = err;
 		this->line = line;
-		std::cout<<"Error "<<errno<<" has occured:"<<message<<" in file:"<<file<<" line:"<<line<<std::endl;
+		std::cout<<"Error "<<err<<" has occured:"<<message<<" in file:"<<file<<" line:"<<line<<std::endl;
 	}
 };
 #define THROW(num,msg) throw Exception(num,msg,__FILE__,__LINE__)

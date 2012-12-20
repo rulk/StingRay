@@ -11,8 +11,9 @@ namespace StingRay {
 OpenClKernel::OpenClKernel(const std::string & fileName,const std::string & kernelName)
 
 {
-	Context context = Core::getInstance()->getContext();
-	DeviceId device = Core::getInstance()->getDeviceId();
+	program = 0;
+	kernel =0;
+	this->kernelName = kernelName;
 	//! TODO rewrite this horror
 	  FILE *fp;
 	    char *source_str;
@@ -26,39 +27,65 @@ OpenClKernel::OpenClKernel(const std::string & fileName,const std::string & kern
 	    source_size = fread( source_str, 1, MAX_SOURCE_SIZE, fp);
 	    fclose( fp );
 	    cl_int ret;
-	    program = clCreateProgramWithSource(context, 1,
-	               (const char **)&source_str, (const size_t *)&source_size, &ret);
 
-	       // Build the program
-	    ret = clBuildProgram(program, 1, &device, NULL, NULL, NULL);
-	    char buildLog[10000];
-	    size_t rett;
-	    clGetProgramBuildInfo(program,device,CL_PROGRAM_BUILD_LOG,10000,(void*)buildLog,&rett);
-	    if(ret!=CL_SUCCESS)
-	    {
-
-	    	THROW(0,buildLog);
-
-	    }
-	    else
-	    {
-	    	std::cout<<buildLog<<std::endl;
-	    }
 	       // Create the OpenCL kernel
-	    kernel = clCreateKernel(program, kernelName.c_str(), &ret);
+	    source= source_str;
 	    free(source_str);
-	    bProgramOwner = true;
+	    compiled = false;
 
 }
-OpenClKernel::OpenClKernel(Program program,const std::string & kernelName ):
-				program(program)
+void OpenClKernel::programFromSource(const std::string & append ,const std::string & prepend )
 {
-	bProgramOwner = false;
-	 cl_int ret;
-	 kernel = clCreateKernel(program, kernelName.c_str(), &ret);
+	std::string source;
+	source = append+" "+this->source+" "+prepend;
+
+	Context context = Core::getInstance()->getContext();
+	DeviceId device = Core::getInstance()->getDeviceId();
+	size_t size = source.size();
+	const char * src = source.c_str();
+	cl_int ret;
+	program = clCreateProgramWithSource(context, 1, (const char **) &(src),
+			(const size_t *) &size, &ret);
+
+	// Build the program
+	ret = clBuildProgram(program, 1, &device, NULL, NULL, NULL);
+	char buildLog[10000];
+	size_t rett;
+	clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, 10000,
+			(void*) buildLog, &rett);
+	if (ret != CL_SUCCESS)
+	{
+
+		THROW(0, buildLog);
+
+	}
+	else
+	{
+		std::cout << buildLog << std::endl;
+	}
 }
+void OpenClKernel::createIKernel()
+{
+	cl_int ret;
+	kernel = clCreateKernel(program, kernelName.c_str(), &ret);
+}
+void OpenClKernel::initDefaultArgs()
+{
+	if(!compiled) return;
+	Image i = Core::getInstance()->getRenderingImage();
+	setArg(0,&i);
+}
+void OpenClKernel::compileKernel()
+{
+	programFromSource();
+	createIKernel();
+	compiled = true;
+	initDefaultArgs();
+}
+
 void OpenClKernel::run(CommandQue que,size_t * globalItemSize,size_t * localItemSize)
 {
+	if(!compiled)THROW(0,"You need to compile kernel before runing!");
 	clFinish(que);
 	cl_event event;
 	cl_ulong t_start,t_finis;
@@ -78,7 +105,10 @@ void OpenClKernel::run(CommandQue que,size_t * globalItemSize,size_t * localItem
 }
 OpenClKernel::~OpenClKernel()
 {
-	 clReleaseKernel(kernel);
-	 if(bProgramOwner) clReleaseProgram(program);
+	 if(compiled)
+	 {
+		 clReleaseKernel(kernel);
+	 	 clReleaseProgram(program);
+	 }
 }
 } /* namespace SimpleRayTracer */

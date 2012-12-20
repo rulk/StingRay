@@ -7,9 +7,10 @@
 
 #ifndef MATERIAL_H_
 #define MATERIAL_H_
-
+#include "implementation.h"
 #include "ConfigLoader.h"
-
+#include "MaterialManager.h"
+#include "MaterialProgramm.h"
 namespace StingRay
 {
 
@@ -18,17 +19,18 @@ class Material
 	ConfigNode * root;
 	const size_t offset;
 	const MaterialManager * parentManager;
-	const MaterialProgramParam * program;
+	const MaterialProgram * program;
 	friend class MaterialManager;
-	Material(ConfigNode * root,size_t offset,MaterialManager * parent,MaterialProgramParam * program);
+	Material(ConfigNode * root,size_t offset,MaterialManager * parent,const MaterialProgram* program);
 	virtual ~Material();
 public:
 
 	std::string getName();
 	void setParameter(const std::string & name,const std::vector<std::string> & value);
 	void setParameter(ConfigNode * node);
-	Real getParameterReal(const std::string & name);
-	StreamData getParameter(const std::string & name);
+	StreamData * getParameter(const std::string & name,const std::string & type);
+	StreamData * getParameter(unsigned int i);
+	bool hasParameter(const std::string & name);
 
 
 };

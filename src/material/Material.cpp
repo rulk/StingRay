@@ -10,7 +10,7 @@
 namespace StingRay
 {
 
-Material::Material(ConfigNode * root,size_t offset,MaterialManager * parent,MaterialProgramParam * program):
+Material::Material(ConfigNode * root,size_t offset,MaterialManager * parent,const MaterialProgram * program):
 		root(root),offset(offset),parentManager(parent),program(program)
 {
 
@@ -26,10 +26,10 @@ void Material::setParameter(const std::string & name,const std::vector<std::stri
 	ConfigNode * child = root->findChild(name,false);
 	if(child ==  NULL)
 	{
-		ConfigNode * child = new ConfigNode(root,name);
+		child = new ConfigNode(root,name);
 	}
 	child->clearValues();
-	std::vector<std::string>::iterator it = value.begin();
+	std::vector<std::string>::const_iterator it = value.begin();
 	while(it != value.end())
 	{
 		child->addValue(*it);
@@ -41,38 +41,29 @@ void Material::setParameter( ConfigNode * node)
 {
 	root->addChild(node,true);
 }
-Real Material::getParameterReal(const std::string & name)
+StreamData * Material::getParameter(const std::string & name,const std::string & type)
 {
 	ConfigNode * node = root->findChild(name);
-	if (node == NULL || node->getValues().size() < 1)
-		return RealI(0);
-	return RealI(node->getValue(0));
+	if (node != NULL )
+		return constructTypeFromStrings(type,node->getValues());
+	else
+		THROW(0,"Parameter:"+name+" of type:"+type+"was requested in material:"+getName()+" but was not found!");
+
 }
-Vector2Impl Material::getParameterVector2(const std::string & name)
+StreamData * Material::getParameter(unsigned int i)
 {
-	ConfigNode * node = root->findChild(name);
-	if (node == NULL || node->getValues().size() < 2)
-		return Vector2I(0, 0);
-	return Vector2I(node->getValue(0), node->getValue(1));
+	if(program->getParamCount() > i)
+	{
+		return getParameter(program->getParamName(i),program->getParamType(i));
+	}
+	return NULL;
 }
-Vector3Impl Material::getParameterVector3(const std::string & name)
+bool Material::hasParameter(const std::string & name)
 {
 	ConfigNode * node = root->findChild(name);
-	if (node == NULL || node->getValues().size() < 3)
-		return Vector3I(0, 0, 0);
-	return Vector3I(node->getValue(0), node->getValue(2), node->getValue(3));
-}
-Vector4Impl Material::getParameterVector4(const std::string & name)
-{
-	ConfigNode * node = root->findChild(name);
-	if (node == NULL || node->getValues().size() < 4)
-		return Vector4I(0, 0, 0, 0);
-	return Vector4I(node->getValue(0), node->getValue(2), node->getValue(3),
-			node->getValue(4));
-}
-StreamData Material::getParameter(const std::string & name)
-{
-	ConfigNode * node = root->findChild(name);
+		if (node != NULL )
+			return true;
+		return false;
 }
 Material::~Material()
 {

@@ -16,17 +16,17 @@ class MaterialProgramManager
 	std::string programPath;
 	int progRamIdCounter;
 	std::string programExtension;
-	std::map<unsigned int,MaterialProgramm * > programs;
+	std::map<unsigned int,MaterialProgram * > programs;
 	std::map<std::string, unsigned int> programNameToId;
 
-	MaterialProgramm *  loadProgram(const std::string & name);
+	MaterialProgram *  loadProgram(const std::string & name);
 	void buildSwitchSource(std::stringstream & out);
 public:
 	MaterialProgramManager(const std::string & programPath, const std::string & programExtension = "cl");
 
-	const MaterialProgramm * getProgram(const std::string & name);
-	const MaterialProgramm * getProgram(const std::string & name,const std::string & fullPath );
-	const MaterialProgramm * getProgramById(unsigned int id);
+	const MaterialProgram * getProgram(const std::string & name);
+	const MaterialProgram * getProgram(const std::string & name,const std::string & fullPath );
+	const MaterialProgram * getProgramById(unsigned int id);
 
 	std::string buildSource();
 	virtual ~MaterialProgramManager();

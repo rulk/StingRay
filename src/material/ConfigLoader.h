@@ -111,7 +111,7 @@ namespace StingRay
 		}
 		inline void addChild(ConfigNode * node ,bool replaceExisting = false)
 		{
-			for(int i=0;i<m_children.size();i++)
+			for(size_t i=0;i<m_children.size();i++)
 			{
 				if(node->getName() == m_children[i]->getName())
 				{

@@ -4,9 +4,9 @@
  *  Created on: Dec 17, 2012
  *      Author: rulk
  */
-
+#include <fstream>
 #include "MaterialManager.h"
-
+#include "Material.h"
 namespace StingRay {
 
 MaterialManager::MaterialManager(const std::string & materialFolder, const std::string & programFolder):
@@ -21,7 +21,7 @@ MaterialManager::~MaterialManager() {
 }
 void MaterialManager::loadFile(const std::string & fileName)
 {
-	std::ifstream in(materialFolder+fileName, std::ios::binary);
+	std::ifstream in((materialFolder+fileName).c_str(), std::ios::binary);
 	parseScript(in);
 }
 void MaterialManager::compile()
@@ -32,33 +32,67 @@ void MaterialManager::compile()
 	{
 		ConfigNode * programNode =  it->second->findChild("program");
 		if(programNode == NULL)
+		{
+			std::cout<<"Material "<<it->first<<"must specify program .. will not be rendered"<<std::endl;
 			continue;
+		}
 
-		std::string & programName = programNode->getValue(0);
+		const std::string & programName = programNode->getValue(0);
 
-		const MaterialProgramm * program = programManager->getProgram(programName);
+		const MaterialProgram * program = programManager->getProgram(programName);
 		if(program == NULL) continue;
-		Material * material = new Material(it->first,offset,this,program);
-		size_t count = program->paramCount();
+		Material * material = new Material(it->second,offset,this,program);
+		size_t count = program->getParamCount();
+		bool materialOk = true;
 		for(size_t i=0;i<count;i++)
 		{
 			std::string paramName = program->getParamName(i);
-
-			std::string type = program->getParamType(i);
-			if(type == "float")
+			if(!material->hasParameter(paramName))
 			{
-				Real r = material->getParameterReal(paramName);
-				stream->putData<Real>(r);
-				offset += program->getParamOffset(i);
+				std::cout<<"Material "<<it->first<<" has not specified parameter "<<program->getParamType(i)<<" "<<paramName<<" .. will not be rendered"<<std::endl;
+				materialOk = false;
+				break;
 			}
 
+		}
+		if(materialOk)
+		{
+			materials[material->getName()] = material;
+			offset+=program->getParamTotalLength();
+		}
+	}
 
+	stream = new VoidStream(offset,STREAM_READ);
+
+	// now iterate over good materials
+	MaterialMap::iterator mat = materials.begin();
+	for(;mat!= materials.end();mat++)
+	{
+		Material * material = mat->second;
+		size_t count = material->program->getParamCount();
+		for(size_t i=0;i<count;i++)
+		{
+			StreamData * data = material->getParameter(i);
+			stream->putStreamData(*data);
 		}
 
-
 	}
+	stream->flushData();
 }
-Material * getMaterial(const std::string & name);
-VoidStream * getCompiledStream();
+Material * MaterialManager::getMaterial(const std::string & name)
+{
+	MaterialMap::iterator mat = materials.find(name);
+	if(mat != materials.end())
+	{
+		return mat->second;
+	}
+	return NULL;
+}
+VoidStream * MaterialManager::getCompiledStream()
+{
+	if(stream == NULL)
+		compile();
+	return stream;
+}
 } /* namespace StingRay */
 

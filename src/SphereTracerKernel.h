@@ -10,13 +10,13 @@
 #include "implementation.h"
 #include "Camera.h"
 #include "SphereStream.h"
+#include "MaterialKernel.h"
 namespace StingRay {
 
-class SphereTracerKernel:public Kernel {
+class SphereTracerKernel:public MaterialKernel {
 public:
 	SphereTracerKernel();
 
-	void setCamera(const Camera * cam );
 	void setSphereStream(const SphereStream * speres);
 
 	virtual ~SphereTracerKernel();

@@ -22,19 +22,19 @@ struct MaterialProgramParam
 	bool isNaN;
 
 };
-class MaterialProgramm
+class MaterialProgram
 {
 	std::string name;
 	std::string processedSource;
 	size_t paramsByteSize;
 	std::map<unsigned int,MaterialProgramParam> params;
 	std::map<std::string,unsigned int> paramNameId;
-	MaterialProgramm(const std::string & name,const std::string & filename);
-	virtual ~MaterialProgramm();
+	MaterialProgram(const std::string & name,const std::string & filename);
+	virtual ~MaterialProgram();
 	friend class MaterialProgramManager;
 public:
-	size_t paramCount() const;
-	size_t paramTotalLength() const;
+	size_t getParamCount() const;
+	size_t getParamTotalLength() const;
 	size_t getParamOffset(unsigned int id) const;
 	size_t getParamOffset(const std::string & name) const;
 	std::string getParamName(unsigned int id) const;

@@ -34,7 +34,7 @@ public:
 	{
 		if(validElements < maxElements && elemntBuffer != NULL)
 		{
-			putData<vector>(v);
+			VoidStream::putData<vector>(v);
 			validElements++;
 			return true;
 		}
@@ -44,7 +44,7 @@ public:
 	{
 		if(position < maxElements && validElements > position && elemntBuffer != NULL)
 		{
-			replaceData<vector>(v,position*sizeof(vector));
+			VoidStream::replaceData<vector>(v,position*sizeof(vector));
 			return true;
 		}
 		return false;
@@ -53,7 +53,7 @@ public:
 	{
 		if(position < validElements && elemntBuffer != NULL)
 		{
-			return getData< vector>(position*sizeof(vector),result);
+			return VoidStream::getData< vector>(position*sizeof(vector),result);
 		}
 		return false;
 	}
