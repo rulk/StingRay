@@ -28,9 +28,7 @@ public:
 	void setParameter(const std::string & name,const std::vector<std::string> & value);
 	void setParameter(ConfigNode * node);
 	Real getParameterReal(const std::string & name);
-	Vector2Impl getParameterVector2(const std::string & name);
-	Vector3Impl getParameterVector3(const std::string & name);
-	Vector4Impl getParameterVector4(const std::string & name);
+	StreamData getParameter(const std::string & name);
 
 
 };

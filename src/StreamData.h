@@ -9,35 +9,18 @@
 #define STREAMDATA_H_
 #include<vector>
 #include <string>
-template<class IMP>
+namespace StingRay
+{
 class StreamData
 {
-protected:
-	IMP data;
 public:
-	/*StreamData(const IMP & init) = 0;
-	StreamData & operator = (const IMP & init) = 0;
-	StreamData(const std::vector<std::string> & strings) =0;
-	StreamData(void * ptr) = 0;
-	*/
-	void * getIMemoryPtr() const
-	{
-		return (void*)&data;
-	}
-	size_t getISize() const
-	{
-		return sizeof(IMP);
-	}
-	IMP geItData() const
-	{
-		return data;
-	}
-	void setIData(void * ptr)
-	{
-		data = *((IMP*)ptr);
-	}
+
+	virtual void * getIMemoryPtr() const = 0;
+	virtual size_t getISize() const = 0;
+	virtual void setIData(void * ptr) = 0;
+	virtual ~StreamData(){};
 
 };
-
+}
 
 #endif /* STREAMDATA_H_ */

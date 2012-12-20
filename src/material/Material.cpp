@@ -70,6 +70,10 @@ Vector4Impl Material::getParameterVector4(const std::string & name)
 	return Vector4I(node->getValue(0), node->getValue(2), node->getValue(3),
 			node->getValue(4));
 }
+StreamData Material::getParameter(const std::string & name)
+{
+	ConfigNode * node = root->findChild(name);
+}
 Material::~Material()
 {
 	// material is just a helper class it does not manage any data

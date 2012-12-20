@@ -20,7 +20,7 @@ protected:
 
 public:
 	VoidStream(size_t size, SteramType type) :
-		maxSize(size), validSize(0), buffer(buffer)
+			maxSize(size), validSize(0), buffer(buffer)
 	{
 		buffer = Core::getInstance()->createBufferForStream(maxSize, type);
 		elemntBuffer = malloc(maxSize);
@@ -32,12 +32,12 @@ public:
 		if (elemntBuffer != NULL)
 			free(elemntBuffer);
 	}
-	template <class T> bool putData(const T & data)
+	template<class T> bool putData(const T & data)
 	{
-		if(validSize+sizeof(T) <= maxSize && elemntBuffer != NULL)
+		if (validSize + sizeof(T) <= maxSize && elemntBuffer != NULL)
 		{
-			*((T*)(elemntBuffer+validSize))  = data;
-			validSize+=sizeof(T);
+			*((T*) (elemntBuffer + validSize)) = data;
+			validSize += sizeof(T);
 			return true;
 		}
 		return false;
@@ -45,24 +45,71 @@ public:
 	/**
 	 * Use with extreme care if you rewrite some data not probably alighn you will get junk
 	 */
-	template<class T> bool replaceData(const T & data,size_t offset)
+	template<class T> bool replaceData(const T & data, size_t offset)
 	{
-		if( offset+sizeof(T) <= maxSize && elemntBuffer != NULL)
+		if (offset + sizeof(T) <= maxSize && elemntBuffer != NULL)
 		{
-			*((T*)(elemntBuffer+offset))  = data;
+			*((T*) (elemntBuffer + offset)) = data;
 			return true;
 		}
 		return false;
 	}
-	template<class T>bool getData(size_t offset,T & result) const
+	template<class T> bool getData(size_t offset, T & result) const
 	{
-		if(offset+sizeof(T) <= validSize && elemntBuffer != NULL)
+		if (offset + sizeof(T) <= validSize && elemntBuffer != NULL)
 		{
-			result = *((T*)(elemntBuffer+offset));
+			result = *((T*) (elemntBuffer + offset));
 			return true;
 		}
 		return false;
 	}
+	bool putData(const void * data, size_t size)
+	{
+		if (validSize + size <= maxSize && elemntBuffer != NULL)
+		{
+			memcpy(elemntBuffer + validSize, data, size);
+			validSize += size;
+			return true;
+		}
+		return false;
+
+	}
+	bool replaceData(const void * data, size_t size, size_t offset)
+	{
+		if (offset + size <= maxSize && elemntBuffer != NULL)
+		{
+			memcpy(elemntBuffer + offset, data, size);
+			return true;
+		}
+		return false;
+	}
+	bool getData(size_t offset, void * data, size_t size)
+	{
+		if (offset + size <= validSize && elemntBuffer != NULL)
+		{
+			memcpy(data, (elemntBuffer + offset), size);
+			return true;
+		}
+		return false;
+	}
+	bool putData(const StreamData & data)
+	{
+		return putData(data.getIMemoryPtr(), data.getISize());
+	}
+	bool replaceData(const StreamData & data)
+	{
+		return replaceData(data.getIMemoryPtr(), data.getISize());
+	}
+	bool getData(size_t offset, StreamData & data)
+	{
+		if (offset + data.getISize() <= validSize && elemntBuffer != NULL)
+		{
+			data.setIData((elemntBuffer + offset));
+			return true;
+		}
+		return false;
+	}
+
 	void flushData() const
 	{
 		buffer->write(elemntBuffer, validSize);
@@ -74,6 +121,5 @@ public:
 	}
 };
 }
-
 
 #endif /* VOIDSTREAM_H_ */

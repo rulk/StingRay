@@ -19,6 +19,7 @@
 #define DIMENSION 2
 #define STREAM_VEC_CLASS_NAME StreamVec2
 #include "StreamVec.h"
+using namespace StingRay;
 typedef StreamVec2<2,float,cl_float2> Ivec2;
 typedef StreamVec1<1,float,cl_float> Ivec1;
 //#include <gtest/gtest.h>

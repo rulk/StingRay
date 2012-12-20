@@ -66,6 +66,7 @@ namespace StingRay
 		vec.x = RealI(x), vec.y = RealI(x);
 		return vec;
 	}
+
 	inline size_t getTypeSize(const std::string & type)
 	{
 		if(type == "float")
@@ -86,6 +87,7 @@ namespace StingRay
 			return sizeof(cl_int4);
 		return 0;
 	}
+
 	typedef cl_mem Image;
 }
 #include "clVectorBufferImpl.h"
