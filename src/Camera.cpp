@@ -26,7 +26,7 @@ Vector4Impl cross(Vector4Impl a,Vector4Impl b)
 }
 Camera::Camera() {
 
-	cameraStream = new Vector4ImplStream(5,STREAM_WRITE);
+	cameraStream = new Vector4ImplStream(5,STREAM_READ);
 	cameraStream->put(Vector4I(0,0,0,0));
 	cameraStream->put(Vector4I(0,0,-1,0));
 	cameraStream->put(Vector4I(120,120,3.14,3.14));

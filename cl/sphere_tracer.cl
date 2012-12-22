@@ -50,7 +50,11 @@ bool raySphereIntersect(float4 center,float r,const Ray * ray,float * distan,flo
 	return true;
 	
 }
-__kernel void sphtracer(__write_only image2d_t output,__global float4 *camera, __global float4 *spherePos, __global float4 *sphereColor)
+__kernel void sphtracer(__write_only image2d_t output,
+						__global float4 *camera,
+						__global void *materials,
+						__global float4 *spherePos, 
+						__global float4 *sphereColor)
 {
 	int i = get_global_id(0);
 	Camera cam;
@@ -74,8 +78,10 @@ __kernel void sphtracer(__write_only image2d_t output,__global float4 *camera, _
 	float intense;
 	if(raySphereIntersect(spherePos[0],sphereColor[0].x,&ray,&di,&intense))
 	{
-		
-		color = (uint4)(sphereColor[0].y*255,sphereColor[0].z*255,sphereColor[0].w*255,255);
+		color = applyMaterial(0,materials);
+		//if(c.x > 255)c.x = 255;
+		//color.x = ((__global uint4*)materials)[0].x;
+		//color = (uint4)(sphereColor[0].y*255,sphereColor[0].z*255,sphereColor[0].w*255,255);//applyMaterial(0,materials);//
 		//color.xyz *= intense;
 		
 	}

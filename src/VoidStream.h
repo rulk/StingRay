@@ -37,7 +37,7 @@ public:
 	{
 		if (validSize + sizeof(T) <= maxSize && elemntBuffer != NULL)
 		{
-			*((T*) (elemntBuffer + validSize)) = data;
+			*((T*) (((char*)elemntBuffer) + validSize)) = data;
 			validSize += sizeof(T);
 			return true;
 		}
@@ -50,7 +50,7 @@ public:
 	{
 		if (offset + sizeof(T) <= maxSize && elemntBuffer != NULL)
 		{
-			*((T*) (elemntBuffer + offset)) = data;
+			*((T*) (((char*)elemntBuffer) + offset)) = data;
 			return true;
 		}
 		return false;
@@ -59,7 +59,7 @@ public:
 	{
 		if (offset + sizeof(T) <= validSize && elemntBuffer != NULL)
 		{
-			result = *((T*) (elemntBuffer + offset));
+			result = *((T*) (((char*)elemntBuffer) + offset));
 			return true;
 		}
 		return false;
@@ -68,7 +68,7 @@ public:
 	{
 		if (validSize + size <= maxSize && elemntBuffer != NULL)
 		{
-			memcpy(elemntBuffer + validSize, data, size);
+			memcpy(((char*)elemntBuffer) + validSize, data, size);
 			validSize += size;
 			return true;
 		}
@@ -79,7 +79,7 @@ public:
 	{
 		if (offset + size <= maxSize && elemntBuffer != NULL)
 		{
-			memcpy(elemntBuffer + offset, data, size);
+			memcpy(((char*)elemntBuffer) + offset, data, size);
 			return true;
 		}
 		return false;
@@ -88,7 +88,7 @@ public:
 	{
 		if (offset + size <= validSize && elemntBuffer != NULL)
 		{
-			memcpy(data, (elemntBuffer + offset), size);
+			memcpy(data, (((char*)elemntBuffer) + offset), size);
 			return true;
 		}
 		return false;
@@ -105,7 +105,7 @@ public:
 	{
 		if (offset + data.getISize() <= validSize && elemntBuffer != NULL)
 		{
-			data.setIData((elemntBuffer + offset));
+			data.setIData((((char*)elemntBuffer) + offset));
 			return true;
 		}
 		return false;

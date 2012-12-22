@@ -64,6 +64,7 @@ OpenClCore::OpenClCore(int width,int height):width(width),height(height) {
 		{
 			device_id = ids[i];
 			std::cout<<"Device :"<<ids[i]<<" type GPU"<<std::endl;
+			break;
 		}
 	}
 
@@ -116,13 +117,16 @@ void OpenClCore::dumpImage(std::string fname)
 	*/
 	FreeImage_Initialise();
 	BYTE * pixels =(BYTE*) malloc(4*width*height);
+	if(pixels == NULL)
+		THROW(0,"malloc returned NULL");
 	const size_t origin[3] = {0,0,0};
 	const size_t reg[3] = {width,height,1};
+	clFinish(command_que);
 	cl_int ret = clEnqueueReadImage(command_que,image,CL_TRUE,origin,reg,
 									   0,0,pixels,0,NULL,NULL);
-	printf("%x %x %x %x\n",pixels[4*100],pixels[4*100+1],pixels[4*100+2],pixels[4*100+3]);
+
 	if(ret != CL_SUCCESS)
-		THROW(0,"can't read device image sorry");
+		THROW(ret,"can't read device image sorry");
 	FIBITMAP *img = FreeImage_ConvertFromRawBits(pixels, width, height,
 			width*4 , 32, 0xff000000, 0xff000000, 0xff000000, false);
 

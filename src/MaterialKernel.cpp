@@ -26,7 +26,9 @@ void MaterialKernel::compileKernel()
 	std::string append = materialManager->getCompiledSource();
 	programFromSource(append);
 	createIKernel();
+	compiled = true;
 	initDefaultArgs();
+
 	setArg(KERNEL_MATERIALSTREAM_ARG,materialManager->getCompiledStream());
 
 }

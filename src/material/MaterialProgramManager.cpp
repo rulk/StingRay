@@ -45,8 +45,8 @@ MaterialProgram *  MaterialProgramManager::loadProgram(const std::string & name)
 std::string MaterialProgramManager::buildSource()
 {
 	std::stringstream switchSource,functions;
-	switchSource<<"float4 applyMaterial(int materialId, void * materialData)\n{\n";
-	switchSource<<"\tswitch(materialId)\n\t{";
+	switchSource<<"uint4 applyScript(int scriptID, __global void * materialData)\n{\n";
+	switchSource<<"\tswitch(scriptID)\n\t{";
 	std::map<unsigned int,MaterialProgram * >::iterator it = programs.begin();
 	while(it != programs.end())
 	{

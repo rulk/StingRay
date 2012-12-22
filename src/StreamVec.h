@@ -21,14 +21,43 @@ class STREAM_VEC_CLASS_NAME:public Vec<DIMENSION,T>,public StreamData
 		data.x = Vec<DIMENSION,T>::v[0];
 		data.y = Vec<DIMENSION,T>::v[1];
 #endif
-#if DIMENSION > 3
+#if DIMENSION > 2
 		data.z = Vec<DIMENSION,T>::v[2];
 #endif
-#if DIMENSION > 4
+#if DIMENSION > 3
 		data.w = Vec<DIMENSION,T>::v[3];
 #endif
 	}
 public:
+
+
+#if DIMENSION > 1
+	STREAM_VEC_CLASS_NAME(const T &x
+#if DIMENSION > 1
+			,const T &y
+#if DIMENSION > 2
+			,const T &z
+#if DIMENSION > 3
+			,const T &w
+#endif
+#endif
+#endif
+
+	)
+	{
+		Vec<DIMENSION,T>::v[0] = x;
+#if DIMENSION > 1
+		Vec<DIMENSION,T>::v[1] = y;
+#if DIMENSION > 2
+		Vec<DIMENSION,T>::v[2] = z;
+#if DIMENSION > 3
+		Vec<DIMENSION,T>::v[3] = w;
+#endif
+#endif
+#endif
+		synchImplementationData();
+	}
+#endif
 
 
 	STREAM_VEC_CLASS_NAME(const IMP & x)
@@ -44,10 +73,10 @@ public:
 		Vec<DIMENSION,T>::v[0] =  (T)atof(strings[0].c_str());
 		Vec<DIMENSION,T>::v[1] =  (T)atof(strings[1].c_str());
 #endif
-#if DIMENSION > 3
+#if DIMENSION > 2
 		Vec<DIMENSION,T>::v[2] =  (T)atof(strings[2].c_str());
 #endif
-#if DIMENSION > 4
+#if DIMENSION > 3
 		Vec<DIMENSION,T>::v[3] =  (T)atof(strings[3].c_str());
 #endif
 
@@ -76,10 +105,10 @@ public:
 		Vec<DIMENSION,T>::v[0] = x.x;
 		Vec<DIMENSION,T>::v[1] = x.y;
 #endif
-#if DIMENSION > 3
+#if DIMENSION > 2
 		Vec<DIMENSION,T>::v[2] = x.z;
 #endif
-#if DIMENSION > 4
+#if DIMENSION > 3
 		Vec<DIMENSION,T>::v[3] = x.w;
 #endif
 	}

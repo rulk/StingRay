@@ -33,7 +33,7 @@ void MaterialManager::compile()
 		ConfigNode * programNode =  it->second->findChild("program");
 		if(programNode == NULL)
 		{
-			std::cout<<"Material "<<it->first<<"must specify program .. will not be rendered"<<std::endl;
+			std::cout<<"Material "<<it->first<<" must specify program .. will not be rendered"<<std::endl;
 			continue;
 		}
 

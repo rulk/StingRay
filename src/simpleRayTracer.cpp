@@ -44,11 +44,24 @@ void display()
     cam->setFovDeg(30,30);
     cam->flush();
 
-    SphereStream * spheres = new SphereStream(1,STREAM_WRITE);
+    MaterialManager * materials = new MaterialManager("/home/rulk/src/raytracer-wsp/StingRay/src/material/"
+    		,"/home/rulk/src/raytracer-wsp/StingRay/src/material/");
+    materials->loadFile("basic.material");
+
+    materials->compile();
+    Material * mat = materials->getMaterial("simpleColor");
+    std::cout<<mat<<std::endl;
+
+
+    SphereStream * spheres = new SphereStream(1,STREAM_READ);
     spheres->put(Vector4I(2,0,-8,1),1,Vector3I(0,0,1));
     spheres->flush();
 
     SphereTracerKernel * kernel = new SphereTracerKernel();
+    kernel->setMaterialManager(materials);
+
+    kernel->compileKernel();
+
     kernel->setCamera(cam);
     kernel->setSphereStream(spheres);
 

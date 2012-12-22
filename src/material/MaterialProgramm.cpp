@@ -35,7 +35,7 @@ void MaterialProgram::loadFile(const std::string & fname)
 	std::string line;
 
 	std::stringstream sourceStream;
-	sourceStream<<"float4 "<<name<<"()\n{\n";
+	sourceStream<<"uint4 "<<name<<"(__global void * materialData)\n{\n";
 	if(source.is_open())
 	{
 		 while ( source.good() )
@@ -107,7 +107,7 @@ void MaterialProgram::processSource()
 			params[paramCounter] = param;
 			paramNameId[param.name] = param.id;
 			source<<processedSource.substr(fragment_start_pos,start_pos-fragment_start_pos);
-			source<<"\t"<<param.type<<" "<<param.name<<" = *(("<<param.type<<"*)(materialData+"<<param.offset<<"));\n";
+			source<<"\t"<<param.type<<" "<<param.name<<" = *((__global "<<param.type<<"*)(materialData+"<<param.offset<<"));\n";
 			fragment_start_pos = end_pos+1;
 			paramCounter ++;
 			start_pos = std::string::npos;

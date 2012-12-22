@@ -110,6 +110,11 @@ typedef StreamVec2<int, cl_int2> Ivec2;
 typedef StreamVec3<int, cl_int3> Ivec3;
 typedef StreamVec4<int, cl_int4> Ivec4;
 
+typedef StreamVec1<unsigned int, cl_uint>  uIvec1;
+typedef StreamVec2<unsigned int, cl_uint2> uIvec2;
+typedef StreamVec3<unsigned int, cl_uint3> uIvec3;
+typedef StreamVec4<unsigned int, cl_uint4> uIvec4;
+
 inline size_t getTypeSize(const std::string & type)
 {
 	if (type == "float")
@@ -128,6 +133,16 @@ inline size_t getTypeSize(const std::string & type)
 		return sizeof(cl_int3);
 	else if (type == "int4")
 		return sizeof(cl_int4);
+
+
+	else if (type == "uint")
+		return sizeof(cl_uint);
+	else if (type == "uint2")
+		return sizeof(cl_uint2);
+	else if (type == "uint3")
+		return sizeof(cl_uint3);
+	else if (type == "uint4")
+		return sizeof(cl_uint4);
 	return 0;
 }
 
@@ -141,6 +156,7 @@ inline StreamData* constructTypeFromStrings(const std::string & type,const std::
 		return new Fvec3(values);
 	else if (type == "float4")
 		return new Fvec4(values);
+
 	else if (type == "int")
 		return new Ivec1(values);
 	else if (type == "int2")
@@ -149,6 +165,15 @@ inline StreamData* constructTypeFromStrings(const std::string & type,const std::
 		return new Ivec3(values);
 	else if (type == "int4")
 		return new Ivec4(values);
+
+	else if (type == "uint")
+		return new uIvec1(values);
+	else if (type == "uint2")
+		return new uIvec2(values);
+	else if (type == "uint3")
+		return new uIvec3(values);
+	else if (type == "uint4")
+		return new uIvec4(values);
 	return 0;
 }
 

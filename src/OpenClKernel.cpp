@@ -39,6 +39,7 @@ void OpenClKernel::programFromSource(const std::string & append ,const std::stri
 	std::string source;
 	source = append+" "+this->source+" "+prepend;
 
+	std::cout<<source<<std::endl;
 	Context context = Core::getInstance()->getContext();
 	DeviceId device = Core::getInstance()->getDeviceId();
 	size_t size = source.size();

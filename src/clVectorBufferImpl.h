@@ -45,7 +45,7 @@ public:
 			allocatedSize = size;
 			createBuffer();
 		}
-		size_t toWrite = allocatedSize;
+		size_t toWrite = size;
 		if(allocatedSize < toWrite)
 			toWrite = allocatedSize;
 		cl_int ret = clEnqueueWriteBuffer(command_queue, buffer, CL_TRUE, 0,
