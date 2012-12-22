@@ -1,16 +1,17 @@
+
 typedef struct usr_Camera
 {
 	float4 p;
-	float3 w;
-	float3 u;
-	float3 v;
+	float4 w;
+	float4 u;
+	float4 v;
 	float2 fov;
 	float2 dim;
 } Camera;
 typedef struct usr_Ray
 {
 	float4 p;
-	float3 d;
+	float4 d;
 }Ray;
 float2 computeRay(Camera * cam,float2 coords,Ray * outRay)
 {
@@ -29,7 +30,7 @@ float2 computeRay(Camera * cam,float2 coords,Ray * outRay)
 }
 bool raySphereIntersect(float4 center,float r,const Ray * ray,float * distan,float * intense)
 {
-	float3 rp = (ray->p-center).xyz;
+	float4 rp = ray->p-center;
 	float b = 2*dot(ray->d,rp);
 	float a = dot(ray->d,ray->d);
 	float c = dot(rp,rp);
@@ -50,6 +51,53 @@ bool raySphereIntersect(float4 center,float r,const Ray * ray,float * distan,flo
 	return true;
 	
 }
+bool rayTrinagelIntersect(const Ray * ray,float4 vert0,float4 vert1,float4 vert2,float * u,float * v,float * t)
+{
+	float4 edge1,edge2,tvec,pvec,qvec;
+	float det,inv_det;
+	
+	edge1 = vert1-vert0;
+	edge2 = vert2-vert0;
+	
+	pvec = cross(ray->d,edge2);
+	
+	det = dot(edge1,pvec);
+	if(det < 0.00001)
+		return false;
+	
+	tvec = ray->p - vert0;
+	
+	*u = dot(tvec,pvec);
+	
+	if(*u < 0.0 || *u > det)
+		return false;
+		
+	qvec = cross(tvec,edge1);
+	
+	*v = dot(ray->d,qvec);
+	
+	if(*v < 0.0 || *u+*v > det)
+		return false;
+	
+	*t = dot(edge2,qvec);
+	inv_det = 1.0/det;
+	*t *= inv_det;
+	*u *= inv_det;
+	*v *= inv_det;
+	return true;
+	
+	
+}
+void initCamera(__global float4 * camera,Camera * cam)
+{
+	cam->p = camera[0];
+	cam->w = camera[1];
+	cam->u = camera[3];
+	cam->v = camera[4];
+	
+	cam->fov = camera[2].zw;
+	cam->dim =  camera[2].xy;
+}
 __kernel void sphtracer(__write_only image2d_t output,
 						__global float4 *camera,
 						__global void *materials,
@@ -58,12 +106,9 @@ __kernel void sphtracer(__write_only image2d_t output,
 {
 	int i = get_global_id(0);
 	Camera cam;
-	cam.p = camera[0];
-	cam.w = camera[1].xyz;
-	cam.u = camera[3].xyz;
-	cam.v = camera[4].xyz;
-	cam.fov = camera[2].zw;
-	cam.dim =  camera[2].xy;
+	initCamera(camera,&cam);
+	
+	// Strating to create rayes from view port
 	int dy = (float)cam.dim.y;
 	int2 coord;
 	coord.x = i/cam.dim.x;
@@ -76,11 +121,16 @@ __kernel void sphtracer(__write_only image2d_t output,
 	float di ;//= dot(ray.d,cam.w)/2.0 +0.5;
 	uint4 color = (uint4)(0,0,0,255);//*(dot(ray.d,cam.w)/2.0+0.5)
 	float intense;
-	if(raySphereIntersect(spherePos[0],sphereColor[0].x,&ray,&di,&intense))
+	float u,v,t;
+	if(rayTrinagelIntersect(&ray,(float4)(0.0,1.0,-8,1),(float4)(-0.5,0,-8,1),(float4)(0.5,0,-8,1),&u,&v,&t)
+	||rayTrinagelIntersect(&ray,(float4)(0.0,1.0,-8,1),(float4)(0.5,0,-8,1),(float4)(-0.5,0,-8,1),&u,&v,&t))
+	//||rayTrinagelIntersect(&ray,(float4)(0.0,1.0,8,1),(float4)(-0.5,0,8,1),(float4)(0.5,0,8,1),&u,&v,&t)
+	//||rayTrinagelIntersect(&ray,(float4)(0.0,1.0,8,1),(float4)(0.5,0,8,1),(float4)(-0.5,0,8,1),&u,&v,&t))//raySphereIntersect(spherePos[0],sphereColor[0].x,&ray,&di,&intense)
 	{
-		color = applyMaterial(0,materials);
+		//color = applyMaterial(0,materials);
 		//if(c.x > 255)c.x = 255;
 		//color.x = ((__global uint4*)materials)[0].x;
+		color.x = 255;
 		//color = (uint4)(sphereColor[0].y*255,sphereColor[0].z*255,sphereColor[0].w*255,255);//applyMaterial(0,materials);//
 		//color.xyz *= intense;
 		
