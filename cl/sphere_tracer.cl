@@ -28,29 +28,7 @@ float2 computeRay(Camera * cam,float2 coords,Ray * outRay)
 	
 	
 }
-bool raySphereIntersect(float4 center,float r,const Ray * ray,float * distan,float * intense)
-{
-	float4 rp = ray->p-center;
-	float b = 2*dot(ray->d,rp);
-	float a = dot(ray->d,ray->d);
-	float c = dot(rp,rp);
-	c -= r*r;
-	
-	float discrim = b*b - 4*a*c;
-	if(discrim < 0)
-		return false;
-	float d1 = (-b + sqrt(discrim))/(2*a);
-	float d2 = (-b - sqrt(discrim))/(2*a);
-	if(d1 > d2)
-		*distan = d2;
-	else 
-		*distan = d1;
-	*intense = 1.0;
-	if(discrim <0.1 && discrim > -0.1)
-		*intense = 0.5;
-	return true;
-	
-}
+
 bool rayTrinagelIntersect(const Ray * ray,float4 vert0,float4 vert1,float4 vert2,float * u,float * v,float * t)
 {
 	float4 edge1,edge2,tvec,pvec,qvec;
@@ -88,7 +66,7 @@ bool rayTrinagelIntersect(const Ray * ray,float4 vert0,float4 vert1,float4 vert2
 	
 	
 }
-void initCamera(__global float4 * camera,Camera * cam)
+void initCamera(__constant float4 * camera,Camera * cam)
 {
 	cam->p = camera[0];
 	cam->w = camera[1];
@@ -98,11 +76,69 @@ void initCamera(__global float4 * camera,Camera * cam)
 	cam->fov = camera[2].zw;
 	cam->dim =  camera[2].xy;
 }
-__kernel void sphtracer(__write_only image2d_t output,
-						__global float4 *camera,
-						__global void *materials,
-						__global float4 *spherePos, 
-						__global float4 *sphereColor)
+bool raySphereIntersect(uint offset,__constant void *renderIndex,const Ray * ray,float * distan)
+{
+	float r = *((__constant float*)(renderIndex+offset));
+	
+	float4 center = *((__constant float4*)(renderIndex+offset + sizeof(float)));
+	
+	float4 rp = ray->p-center;
+	float b = 2*dot(ray->d,rp);
+	float a = dot(ray->d,ray->d);
+	float c = dot(rp,rp);
+	c -= r*r;
+	
+	float discrim = b*b - 4*a*c;
+	if(discrim < 0)
+		return false;
+	float d1 = (-b + sqrt(discrim))/(2*a);
+	float d2 = (-b - sqrt(discrim))/(2*a);
+	if(d1 > d2)
+		*distan = d2;
+	else 
+		*distan = d1;
+	
+	return true;
+	
+}
+#define SIZE_ONE_INDEX_OBJ sizeof(uint)+sizeof(uint)*3
+float4 traceRay(const Ray * ray,__constant void * Materials,__constant void *renderIndex,__constant void *RenderData)
+{
+  uint objectNum = *((__constant uint*)renderIndex);
+  float distan = 999999.9;
+  uint materialOffset;
+  uint scriptId;
+  bool intersected = false;
+  
+  for(uint i =0;i<objectNum;i++)
+  {
+    float d;
+    uint sc = *((__constant uint*)(renderIndex+sizeof(uint)+i*(SIZE_ONE_INDEX_OBJ)));
+    uint objectOffset = *((__constant uint*)(renderIndex+sizeof(uint)+sizeof(uint)+i*(SIZE_ONE_INDEX_OBJ)));
+   
+   // raySphereIntersect(objectOffset,RenderData,ray,&d);
+    if(raySphereIntersect(objectOffset,RenderData,ray,&d) && d < distan)
+    {
+      intersected = true;
+      d = distan;
+      scriptId = *((__constant uint*)(renderIndex+sizeof(uint)+i*(SIZE_ONE_INDEX_OBJ)+sizeof(uint)
+			+sizeof(uint)));
+      materialOffset = *((__constant uint*)(renderIndex+sizeof(uint)+i*(SIZE_ONE_INDEX_OBJ)+sizeof(uint)
+			+sizeof(uint)+sizeof(uint)));
+      
+    }
+  }
+  if(intersected)
+  {
+    return applyScript(scriptId,Materials+materialOffset);
+  }
+  return (float4)(0,0,0,1);
+}
+__kernel void renderKernel(__write_only image2d_t output,//0
+			   __constant float4 *camera,    //1
+			   __constant void *materials,   //2
+			   __constant void *renderIndex, //3
+			   __constant void *renderData)  //4
 {
 	int i = get_global_id(0);
 	Camera cam;
@@ -119,10 +155,13 @@ __kernel void sphtracer(__write_only image2d_t output,
 	Ray ray;
 	float2 c = computeRay(&cam,coordf,&ray);
 	float di ;//= dot(ray.d,cam.w)/2.0 +0.5;
-	uint4 color = (uint4)(0,0,0,255);//*(dot(ray.d,cam.w)/2.0+0.5)
+	float4 color = (float4)(0.0,0.0,0.0,1.0);//*(dot(ray.d,cam.w)/2.0+0.5)
 	float intense;
 	float u,v,t;
-	if(rayTrinagelIntersect(&ray,(float4)(0.0,1.0,-8,1),(float4)(-0.5,0,-8,1),(float4)(0.5,0,-8,1),&u,&v,&t)
+	
+	
+	
+	/*if(rayTrinagelIntersect(&ray,(float4)(0.0,1.0,-8,1),(float4)(-0.5,0,-8,1),(float4)(0.5,0,-8,1),&u,&v,&t)
 	||rayTrinagelIntersect(&ray,(float4)(0.0,1.0,-8,1),(float4)(0.5,0,-8,1),(float4)(-0.5,0,-8,1),&u,&v,&t))
 	//||rayTrinagelIntersect(&ray,(float4)(0.0,1.0,8,1),(float4)(-0.5,0,8,1),(float4)(0.5,0,8,1),&u,&v,&t)
 	//||rayTrinagelIntersect(&ray,(float4)(0.0,1.0,8,1),(float4)(0.5,0,8,1),(float4)(-0.5,0,8,1),&u,&v,&t))//raySphereIntersect(spherePos[0],sphereColor[0].x,&ray,&di,&intense)
@@ -134,7 +173,8 @@ __kernel void sphtracer(__write_only image2d_t output,
 		//color = (uint4)(sphereColor[0].y*255,sphereColor[0].z*255,sphereColor[0].w*255,255);//applyMaterial(0,materials);//
 		//color.xyz *= intense;
 		
-	}
-	write_imageui(output,coord,color);
+	}*/
+	color = traceRay(&ray,materials,renderIndex,renderData);
+	write_imagef(output,coord,color);
 	
 }

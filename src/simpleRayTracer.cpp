@@ -7,27 +7,29 @@
 //============================================================================
 #ifndef UNIT_TESTS
 #include <iostream>
+#include <unistd.h>
 #include <stdlib.h>
 #include <GL/glxew.h>
 #include <GL/glut.h>
 #include "implementation.h"
-#include "SphereTracerKernel.h"
+#include "Sphere.h"
+#include "MaterialKernel.h"
 using namespace std;
 using namespace StingRay;
 void display();
 int main(int argc, char **argv) {
 
-	/*glutInit(&argc,argv);
+	glutInit(&argc,argv);
 	glutInitWindowPosition(0, 0);
 	glutInitWindowSize(256,256);
 	glutInitDisplayMode(GLUT_RGBA|GLUT_SINGLE );
 	glutCreateWindow("StingRay");
-	glutDisplayFunc(display);
+	//glutDisplayFunc(display);
 	glutReshapeWindow(256,256);
 	glewInit();
-	glXGetCurrentDisplay();
-	glutMainLoop();*/
+	//glutMainLoop();
 	display();
+	sleep(5000);
 	return 1;
 }
 void display()
@@ -50,20 +52,29 @@ void display()
 
     materials->compile();
     Material * mat = materials->getMaterial("simpleColor");
+    Material * mat1 = materials->getMaterial("complexColor");
     std::cout<<mat<<std::endl;
 
 
-    SphereStream * spheres = new SphereStream(1,STREAM_READ);
+    RenderableManager * renderables = new RenderableManager();
+
+    Sphere * sphere = new Sphere(mat,Fvec4(2,0,-8,1),1);
+    Sphere * sphere1 = new Sphere(mat1,Fvec4(-2,0,-8,1),1);
+    Sphere * sphere2 = new Sphere(mat1,Fvec4(0,2,-8,1),1);
+    /*SphereStream * spheres = new SphereStream(1,STREAM_READ);
     spheres->put(Vector4I(2,0,-8,1),1,Vector3I(0,0,1));
     spheres->flush();
-
-    SphereTracerKernel * kernel = new SphereTracerKernel();
+     */
+    renderables->registerRendarable(sphere);
+    renderables->registerRendarable(sphere1);
+    renderables->registerRendarable(sphere2);
+    MaterialKernel * kernel = new MaterialKernel("/home/rulk/src/raytracer-wsp/StingRay/cl/sphere_tracer.cl");
     kernel->setMaterialManager(materials);
-
+    kernel->setRenderableManager(renderables);
     kernel->compileKernel();
 
     kernel->setCamera(cam);
-    kernel->setSphereStream(spheres);
+
 
 	size_t global_item_size = 256*256; // Process the entire lists
     size_t local_item_size = 256;

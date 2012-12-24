@@ -31,6 +31,11 @@ class STREAM_VEC_CLASS_NAME:public Vec<DIMENSION,T>,public StreamData
 public:
 
 
+	STREAM_VEC_CLASS_NAME()
+	{
+
+	}
+
 #if DIMENSION > 1
 	STREAM_VEC_CLASS_NAME(const T &x
 #if DIMENSION > 1

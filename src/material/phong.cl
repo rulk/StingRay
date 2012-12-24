@@ -1,4 +1,4 @@
-IN(uint4,color);
+IN(float4,color);
 
 
 

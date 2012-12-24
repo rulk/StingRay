@@ -6,10 +6,11 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-//#include <GL/glew.h>
-//#include <GL/glxew.h>
-//#include <CL/cl_gl.h>
-#include "FreeImage.h"
+#include <GL/glew.h>
+#include <GL/glxew.h>
+#include <CL/cl_gl.h>
+#include <GL/glut.h>
+//#include "FreeImage.h"
 #include "implementation.h"
 
 namespace StingRay {
@@ -68,12 +69,12 @@ OpenClCore::OpenClCore(int width,int height):width(width),height(height) {
 		}
 	}
 
-	/*cl_context_properties properties[] = { CL_GL_CONTEXT_KHR,
+	cl_context_properties properties[] = { CL_GL_CONTEXT_KHR,
 			(cl_context_properties) glXGetCurrentContext(), CL_GLX_DISPLAY_KHR,
 			(cl_context_properties) glXGetCurrentDisplay(), CL_CONTEXT_PLATFORM,
-			(cl_context_properties) platform_id, 0 };*/
+			(cl_context_properties) platform_id, 0 };
 	// Create an OpenCL context
-	context = clCreateContext(NULL, 1, &device_id, NULL, NULL, &ret);
+	context = clCreateContext(properties, 1, &device_id, NULL, NULL, &ret);
 
 	// Create a command queue
 	command_que = clCreateCommandQueue(context, device_id, 0, &ret);
@@ -86,7 +87,7 @@ void OpenClCore::initImageRendering()
 	cl_image_format format;
 	format.image_channel_order = CL_RGBA;
 	format.image_channel_data_type = CL_UNSIGNED_INT8;
-	/*glGenTextures(1, &color_tex);
+	glGenTextures(1, &color_tex);
 	glBindTexture(GL_TEXTURE_2D, color_tex);
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -95,26 +96,28 @@ void OpenClCore::initImageRendering()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA,
 			GL_UNSIGNED_BYTE, NULL);
 	//-------------------------
-	glGenFramebuffersEXT(1, &fb);
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
+	glGenFramebuffers(1, &fb);
+	glBindFramebuffer(GL_FRAMEBUFFER_EXT, fb);
 	//Attach 2D texture to this FBO
-	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+	glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
 			GL_TEXTURE_2D, color_tex, 0);
 	glFlush();
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);*/
-	image = clCreateImage2D(context,CL_MEM_WRITE_ONLY,&format,width,height,0,NULL,&ret);
-	//image =  clCreateFromGLTexture(context,CL_MEM_WRITE_ONLY,GL_TEXTURE_2D,0,color_tex,&ret);
+	glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	//image = clCreateImage2D(context,CL_MEM_WRITE_ONLY,&format,width,height,0,NULL,&ret);
+	image =  clCreateFromGLTexture2D(context,CL_MEM_WRITE_ONLY,GL_TEXTURE_2D,0,color_tex,&ret);
 	if(ret != CL_SUCCESS || image == NULL)
 		THROW(0,"Can't create image bufer");
 }
 void OpenClCore::dumpImage(std::string fname)
 {
-	/*glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, fb);
+	glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, fb);
 	glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, 0);
 	glBlitFramebufferEXT(0,0,width,height,0,0,width,height,GL_COLOR_BUFFER_BIT,GL_NEAREST);
 
-	*/
+
+
+	/*
 	FreeImage_Initialise();
 	BYTE * pixels =(BYTE*) malloc(4*width*height);
 	if(pixels == NULL)
@@ -135,6 +138,7 @@ void OpenClCore::dumpImage(std::string fname)
 	FreeImage_Save(FIF_PNG, img, fname.c_str(), 0);
 	//free(pixels);
 	FreeImage_DeInitialise();
+	*/
 
 }
 Image OpenClCore::getRenderingImage()

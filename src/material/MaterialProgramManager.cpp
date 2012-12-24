@@ -10,7 +10,7 @@
 namespace StingRay
 {
 MaterialProgramManager::MaterialProgramManager(const std::string & programPath, const std::string & programExtension)
-:programPath(programPath),progRamIdCounter(0),programExtension(programExtension)
+:programPath(programPath),programIdCounter(0),programExtension(programExtension)
 {
 
 }
@@ -36,16 +36,16 @@ MaterialProgram *  MaterialProgramManager::loadProgram(const std::string & name)
 	std::string path;
 	path = programPath + name+"."+programExtension;
 
-	MaterialProgram * program = new MaterialProgram(name,path);
-	programs[progRamIdCounter] = program;
-	programNameToId[program->name] = progRamIdCounter;
-	progRamIdCounter++;
+	MaterialProgram * program = new MaterialProgram(name,path,programIdCounter);
+	programs[programIdCounter] = program;
+	programNameToId[program->name] = programIdCounter;
+	programIdCounter++;
 	return program;
 }
 std::string MaterialProgramManager::buildSource()
 {
 	std::stringstream switchSource,functions;
-	switchSource<<"uint4 applyScript(int scriptID, __global void * materialData)\n{\n";
+	switchSource<<"float4 applyScript(int scriptID, __constant void * materialData)\n{\n";
 	switchSource<<"\tswitch(scriptID)\n\t{";
 	std::map<unsigned int,MaterialProgram * >::iterator it = programs.begin();
 	while(it != programs.end())

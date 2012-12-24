@@ -5,6 +5,7 @@
  *      Author: rulk
  */
 #include <CL/cl.h>
+#include <CL/cl_gl.h>
 #include "implementation.h"
 namespace StingRay {
 #define MAX_SOURCE_SIZE (0x100000)
@@ -90,13 +91,17 @@ void OpenClKernel::run(CommandQue que,size_t * globalItemSize,size_t * localItem
 	clFinish(que);
 	cl_event event;
 	cl_ulong t_start,t_finis;
-
+	glFinish();
+	Image img = Core::getInstance()->getRenderingImage();
+	 clEnqueueAcquireGLObjects(que, 1, &img, 0, NULL, NULL);
 
 	 cl_int ret = clEnqueueNDRangeKernel(que, kernel, 1, NULL,
 	            globalItemSize, localItemSize, 0, NULL, &event);
 
 	 if(ret != CL_SUCCESS)
 		 THROW(ret,"clEnqueueNDRangeKernel return error");
+	 clEnqueueReleaseGLObjects(que, 1, &img, 0, NULL, NULL);
+	 clFinish(que);
 
 	 clGetEventProfilingInfo(event,CL_PROFILING_COMMAND_START,sizeof(t_start),&t_start,NULL);
 	 clGetEventProfilingInfo(event,CL_PROFILING_COMMAND_END,sizeof(t_finis),&t_finis,NULL);

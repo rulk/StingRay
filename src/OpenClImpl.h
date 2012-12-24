@@ -45,7 +45,7 @@ typedef cl_device_id DeviceId;
 typedef cl_command_queue CommandQue;
 
 typedef cl_char Char;
-
+typedef cl_uint uInt;
 typedef cl_float Real;
 typedef cl_float4 Vector4Impl;
 typedef cl_float3 Vector3Impl;

@@ -30,6 +30,8 @@ public:
 	void setParameter(ConfigNode * node);
 	StreamData * getParameter(const std::string & name,const std::string & type);
 	StreamData * getParameter(unsigned int i);
+	size_t getMaterialDataOffset() const {return offset;}
+	unsigned int getProgramId()const {return program->getId();}
 	bool hasParameter(const std::string & name);
 
 

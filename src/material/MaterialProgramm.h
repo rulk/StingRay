@@ -27,9 +27,10 @@ class MaterialProgram
 	std::string name;
 	std::string processedSource;
 	size_t paramsByteSize;
+	unsigned int id;
 	std::map<unsigned int,MaterialProgramParam> params;
 	std::map<std::string,unsigned int> paramNameId;
-	MaterialProgram(const std::string & name,const std::string & filename);
+	MaterialProgram(const std::string & name,const std::string & filename,unsigned int id);
 	virtual ~MaterialProgram();
 	friend class MaterialProgramManager;
 public:
@@ -41,7 +42,7 @@ public:
 	std::string getParamType(unsigned int id) const;
 	std::string getProcessedSource() const;
 	unsigned int getParamId(const std::string & name) const;
-
+	unsigned int getId()const {return id;}
 	const MaterialProgramParam & getById(unsigned int id)const;
 
 

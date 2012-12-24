@@ -14,7 +14,7 @@ namespace StingRay
 class MaterialProgramManager
 {
 	std::string programPath;
-	int progRamIdCounter;
+	int programIdCounter;
 	std::string programExtension;
 	std::map<unsigned int,MaterialProgram * > programs;
 	std::map<std::string, unsigned int> programNameToId;
