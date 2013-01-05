@@ -58,6 +58,7 @@ bool rayTrinagelIntersect(const Ray * ray,float4 vert0,float4 vert1,float4 vert2
 		return false;
 	
 	*t = dot(edge2,qvec);
+	if(*t < 0) return false;
 	inv_det = 1.0/det;
 	*t *= inv_det;
 	*u *= inv_det;
@@ -101,6 +102,43 @@ bool raySphereIntersect(uint offset,__constant void *renderIndex,const Ray * ray
 	return true;
 	
 }
+bool meshIntersect(uint offset,__constant void *renderIndex,const Ray * ray,float * distan)
+{
+  
+  uint strips = *((__constant uint*)(renderIndex+offset));
+  uint vertexes = *((__constant uint*)(renderIndex+offset+sizeof(uint)));
+ 
+   __constant uint * strip = (__constant uint*)(renderIndex+offset + sizeof(uint)*5);
+  __constant float4 * vert = (__constant float4*)(renderIndex+offset + sizeof(uint)*5 + strips*sizeof(uint));
+  float u,v,t;
+ 
+  for(uint s = 0; s<strips; s++)
+  {
+  	 
+  	  uint mv = vertexes;
+  	  if(s+1 < strips)
+  	  	mv = strip[s+1] - strip[s];
+	  for(uint i=strip[s]+2;i<mv;i++)
+	  {
+		//distan = 0;
+	    bool res = rayTrinagelIntersect(ray,vert[i-2], vert[i-1],vert[i],&u,&v,&t);//vert[i-2], vert[i-1],vert[i]
+	    if(res)
+	    {
+	    	(*distan) = t;
+	    	return true;
+	    }
+	    i++;
+	    if(i>=mv) continue;
+	    res = rayTrinagelIntersect(ray,vert[i-1],vert[i-2],vert[i],&u,&v,&t);//vert[i-2], vert[i-1],vert[i]
+	    if(res)
+	    {
+	    	(*distan) = t;
+	    	return true;
+	    }
+	  }
+  }
+  return false;
+}
 #define SIZE_ONE_INDEX_OBJ sizeof(uint)+sizeof(uint)*3
 float4 traceRay(const Ray * ray,__constant void * Materials,__constant void *renderIndex,__constant void *RenderData)
 {
@@ -110,17 +148,19 @@ float4 traceRay(const Ray * ray,__constant void * Materials,__constant void *ren
   uint scriptId;
   bool intersected = false;
   
-  for(uint i =0;i<objectNum;i++)
+  uint i = 0;
+  //for(uint i =0;i<1;i++)//objectNum;i++)
   {
     float d;
     uint sc = *((__constant uint*)(renderIndex+sizeof(uint)+i*(SIZE_ONE_INDEX_OBJ)));
     uint objectOffset = *((__constant uint*)(renderIndex+sizeof(uint)+sizeof(uint)+i*(SIZE_ONE_INDEX_OBJ)));
    
    // raySphereIntersect(objectOffset,RenderData,ray,&d);
-    if(raySphereIntersect(objectOffset,RenderData,ray,&d) && d < distan)
+    if((sc == 3 && raySphereIntersect(objectOffset,RenderData,ray,&d) && d <= distan) ||
+       (sc == 1 && meshIntersect(objectOffset,RenderData,ray,&d) && d <= distan))
     {
       intersected = true;
-      d = distan;
+      distan = d;
       scriptId = *((__constant uint*)(renderIndex+sizeof(uint)+i*(SIZE_ONE_INDEX_OBJ)+sizeof(uint)
 			+sizeof(uint)));
       materialOffset = *((__constant uint*)(renderIndex+sizeof(uint)+i*(SIZE_ONE_INDEX_OBJ)+sizeof(uint)

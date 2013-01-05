@@ -63,7 +63,16 @@ public:
 	/**
 	 * must return how much memory this object requiers
 	 */
-	virtual size_t getDataSize() = 0;
+	virtual size_t getDataSize()
+	{
+		size_t chunks = getNumDataChunks();
+		size_t total =0;
+		for(size_t i=0;i<chunks;i++)
+		{
+			total += getDataChunkSize(i);
+		}
+		return total;
+	}
 	/**
 	 * some objects is easier to keep in separate buffers, for example vertext, index, normal buffer...
 	 * so to copy the whole object we might need multiple copy operations
@@ -76,7 +85,7 @@ public:
 	 * @parameter chunk - the number of the chunk to copy
 	 * @return valid data pointer to array, or null
 	 */
-	virtual void* getData(size_t chunk) = 0;
+	virtual const  void* getData(size_t chunk) = 0;
 	virtual size_t getDataChunkSize(size_t chunk) = 0;
 
 	virtual ~Renderable()

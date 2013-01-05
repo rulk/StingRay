@@ -24,7 +24,7 @@ public:
 	virtual Char getType();
 	virtual size_t getDataSize();
 	size_t getNumDataChunks();
-	void* getData(size_t chunk);
+	const void* getData(size_t chunk);
 	size_t getDataChunkSize(size_t chunk);
 	virtual ~Sphere();
 };

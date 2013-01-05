@@ -117,6 +117,11 @@ public:
 		Vec<DIMENSION,T>::v[3] = x.w;
 #endif
 	}
+	operator IMP() const
+	{
+		synchImplementationData();
+		return data;
+	}
 	virtual ~STREAM_VEC_CLASS_NAME(){}
 };
 /*

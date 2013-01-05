@@ -34,7 +34,7 @@ size_t Sphere::getNumDataChunks()
 {
 	return 2;
 }
-void* Sphere::getData(size_t chunk)
+const void* Sphere::getData(size_t chunk)
 {
 	if(chunk == 0)return &radius;
 	if(chunk == 1) return position.getIMemoryPtr();
