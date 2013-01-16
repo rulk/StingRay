@@ -35,6 +35,8 @@ public:
 	void position(const Fvec4 & position);
 	void position(float x,float y,float z,float w =1.0);
 
+	void duplicateLast();
+
 	/**
 	 * set current vertexes color;
 	 */

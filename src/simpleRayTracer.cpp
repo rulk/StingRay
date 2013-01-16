@@ -98,17 +98,29 @@ void display()
     themesh->need_bsphere();
     int offset = 0,len = 0,pIndex;
     manual.begin(mat);
+    bool needdub = false;
     for(int i=0;i<themesh->tstrips.size();i++)
     {
     	if( i >= offset+len)
     	{
+
     		offset = i+1;
     		len = themesh->tstrips[i];
-    		manual.beginStrip();
+    		//manual.beginStrip();
+    		if(i != 0)
+    		{
+    			manual.duplicateLast();
+    			needdub = true;
+    		}
     		continue;
     	}
     	pIndex = themesh->tstrips[i];
     	manual.position(themesh->vertices[pIndex][0],themesh->vertices[pIndex][1],themesh->vertices[pIndex][2]);
+    	if(needdub)
+    	{
+    		manual.duplicateLast();
+    		needdub = false;
+    	}
     }
     manual.normal(Fvec4(0,1,0,0));
     std::cout<<"Size:"<<themesh->tstrips.size()<<std::endl;

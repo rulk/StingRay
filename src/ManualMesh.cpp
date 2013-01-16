@@ -51,6 +51,11 @@ void ManualMesh::position(float x,float y,float z,float w)
 	if(vertex.size() ==0 && strip.size() == 0)beginStrip();
 	vertex.push_back(Vector4I(x,y,z,w));
 }
+void ManualMesh::duplicateLast()
+{
+	if(!begun || vertex.size() == 0)return;
+	vertex.push_back(*(vertex.end()--));
+}
 void ManualMesh::color(const Fvec4 & color)
 {
 	if(!begun|| vertex.size() == 0)return;
